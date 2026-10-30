@@ -371,7 +371,7 @@ const ICON = {
 const T = {
   nav: [
     {id:'inicio', es:'Inicio', en:'Start'},
-    {id:'epp', es:'EPP del día', en:'Daily PPE'},
+    {id:'epp', es:'PPE del día', en:'Daily PPE'},
     {id:'carga', es:'Equipo y hielera', en:'Gear & cooler'},
     {id:'equipo', es:'Manejo del equipo', en:'Equipment handling'},
     {id:'jornada', es:'Durante la jornada', en:'During the day'},
@@ -409,7 +409,7 @@ const TASKS = [{k:'saw',es:'Motosierra',en:'Chainsaw'},{k:'cut',es:'Desbrozadora
 
 const START = [
   {es:'Charla de seguridad de 5 minutos realizada', en:'5-minute safety talk held'},
-  {auto:'ppe', es:'EPP completo y en buen estado', en:'PPE complete and in good condition'},
+  {auto:'ppe', es:'PPE completo y en buen estado', en:'PPE complete and in good condition'},
   {auto:'gear', es:'Equipo de trabajo cargado y asegurado', en:'Work gear loaded and secured'},
   {auto:'cooler', es:'Hielera lista: comida, hielo, agua, electrolitos y fruta', en:'Cooler ready: food, ice, water, electrolytes and fruit'},
   {es:'Revisión del vehículo completada', en:'Vehicle check completed'},
@@ -473,7 +473,7 @@ const TOOLS = [
   {k:'herb', es:'Herbicida', en:'Herbicide',
    steps:[
     {bEs:'Revisar', bEn:'Check', es:'Mochila sin fugas, manguera y válvula en buen estado, boquilla correcta.', en:'No leaks, hose and valve in good shape, correct nozzle.'},
-    {bEs:'Mezclar', bEn:'Mix', es:'Según la etiqueta, en área designada lejos de paneles y drenajes, con EPP.', en:'Per the label, in a designated area away from panels and drains, with PPE.'},
+    {bEs:'Mezclar', bEn:'Mix', es:'Según la etiqueta, en área designada lejos de paneles y drenajes, con PPE.', en:'Per the label, in a designated area away from panels and drains, with PPE.'},
     {bEs:'Aplicar', bEn:'Apply', es:'Al anillo exterior del tocón o a la corteza, chorro dirigido o pincel, en el tiempo de la etiqueta.', en:'To the outer ring of the stump or the bark, directed stream or brush, within the label time.'},
     {bEs:'Detener', bEn:'Stop', es:'Si el viento lleva el rocío hacia equipos, personas o agua (más de 10 mph o según etiqueta).', en:'If wind carries spray toward equipment, people or water (over 10 mph or per label).'},
     {bEs:'Salpicaduras', bEn:'Splashes', es:'Limpiar de inmediato con agua y reportar contacto con paneles o cables.', en:'Wipe immediately with water and report contact with panels or cables.'}
@@ -587,7 +587,7 @@ const RETURN = [
   {k:'tag', code:{es:'ETIQ', en:'TAG'}, es:'Revisar con la lista de colores', en:'Check against the color list', cEs:'Cada equipo revisa su color y código: regresa todo.', cEn:'Each team checks its color and code: return everything.'}
 ];
 const DURING = [
-  {es:'EPP completo puesto toda la jornada; no me lo quito por el calor', en:'Full PPE on all day; I don’t take it off because of heat'},
+  {es:'PPE completo puesto toda la jornada; no me lo quito por el calor', en:'Full PPE on all day; I don’t take it off because of heat'},
   {es:'Lentes, guantes y protección auditiva al operar cualquier máquina', en:'Glasses, gloves and hearing protection whenever operating a machine'},
   {es:'Casco con ala para sombra y protector solar reaplicado', en:'Hard hat with sun brim and sunscreen reapplied'},
   {es:'Vigía en su puesto en cada maniobra cerca de paneles', en:'Spotter in place for every maneuver near panels'},
@@ -600,7 +600,7 @@ const LEAVE = [
   {es:'Recorrido final junto a paneles, cables y postes: sin golpes, vidrio roto ni manchas', en:'Final walk along panels, cables and poles: no impacts, broken glass or stains'},
   {es:'Ramas y troncos fuera de los pasillos y lejos de los equipos', en:'Branches and trunks out of aisles and away from equipment'},
   {es:'Sobrante de mezcla manejado según la etiqueta; nunca al suelo ni a drenajes', en:'Leftover mix handled per label; never on the ground or in drains'},
-  {es:'EPP de químicos lavado o desechado; manos y cara lavadas antes de comer', en:'Chemical PPE washed or discarded; hands and face washed before eating'},
+  {es:'PPE de químicos lavado o desechado; manos y cara lavadas antes de comer', en:'Chemical PPE washed or discarded; hands and face washed before eating'},
   {es:'Ropa de trabajo separada de la ropa personal', en:'Work clothes kept apart from personal clothes'},
   {es:'Registro del día: área, producto, cantidad, clima, incidentes y casi-incidentes', en:'Daily log: area, product, amount, weather, incidents and near misses'},
   {es:'Conteo de personal: todos presentes y sin lesiones', en:'Headcount: everyone present and uninjured'}
@@ -682,7 +682,7 @@ const QUIZ = [
    wEs:'En un incidente real, la ubicación se reportó mal dos veces y O&M tardó unas 5.5 horas en encontrar el panel.', wEn:'In a real incident, the location was reported wrong twice and O&M took about 5.5 hours to find the panel.'},
   {es:'¿Cuándo se puede preparar la mezcla de herbicida?', en:'When can the herbicide mix be prepared?', o:[
     {es:'A ojo, si ya tengo experiencia', en:'By eye, if I am experienced'},
-    {es:'Con la etiqueta leída, en el área designada y con EPP', en:'With the label read, in the designated area and with PPE'},
+    {es:'Con la etiqueta leída, en el área designada y con PPE', en:'With the label read, in the designated area and with PPE'},
     {es:'Junto a la fila, para ahorrar tiempo', en:'Next to the row, to save time'}], a:1,
    wEs:'Sin etiqueta leída, no hay mezcla.', wEn:'No label read, no mix.'},
   {es:'Ocurre un segundo accidente en la cuadrilla.', en:'A second accident happens in the crew.', o:[
@@ -693,7 +693,7 @@ const QUIZ = [
 ];
 
 const GLOSS = [
-  {en:'PPE', es:'EPP', dEs:'Equipo de protección personal.', dEn:'Personal protective equipment.'},
+  {en:'PPE', es:'Equipo de protección personal', dEs:'En el sitio usamos el término en inglés: PPE.', dEn:'Personal protective equipment.'},
   {en:'Spotter', es:'Vigía', dEs:'Persona que vigila la zona y puede detener el trabajo.', dEn:'Person who watches the zone and can stop work.'},
   {en:'Kickback', es:'Rebote', dEs:'Salto brusco de la motosierra hacia el operador al tocar con la punta.', dEn:'Sudden jump of the saw toward the operator when the tip touches.'},
   {en:'Exclusion zone', es:'Zona de exclusión', dEs:'Área donde nadie ni nada frágil puede estar mientras se corta.', dEn:'Area where no people or fragile equipment may be during cutting.'},
@@ -702,7 +702,7 @@ const GLOSS = [
   {en:'Snake gaiters', es:'Polainas contra serpientes', dEs:'Protección de tobillo a rodilla contra mordeduras.', dEn:'Ankle-to-knee protection against bites.'},
   {en:'Drift', es:'Deriva', dEs:'Rocío que el viento lleva fuera del objetivo.', dEn:'Spray carried off target by wind.'},
   {en:'SDS', es:'Hoja de seguridad', dEs:'Documento con riesgos y primeros auxilios del producto.', dEn:'Document with the product’s hazards and first aid.'},
-  {en:'REI', es:'Intervalo de reingreso', dEs:'Tiempo antes de volver a entrar sin EPP a un área tratada.', dEn:'Time before re-entering a treated area without PPE.'},
+  {en:'REI', es:'Intervalo de reingreso', dEs:'Tiempo antes de volver a entrar sin PPE a un área tratada.', dEn:'Time before re-entering a treated area without PPE.'},
   {en:'Near miss', es:'Casi-incidente', dEs:'Algo que pudo causar daño y no lo causó. Se reporta.', dEn:'Something that could have caused harm and didn’t. It is reported.'},
   {en:'PCS block', es:'Bloque PCS', dEs:'Sección del sitio solar identificada en el mapa (ej. PCS01234).', dEn:'Section of the solar site identified on the map (e.g. PCS01234).'},
   {en:'Shoulder closure', es:'Cierre de acotamiento', dEs:'Delimitar el borde del camino para estacionar equipo sin ocupar la vía.', dEn:'Marking off the road edge to park equipment without blocking the road.'}
@@ -911,7 +911,7 @@ function reportHTML() {
 }
 function noWork() {
   const es = S.lang === 'es';
-  return `<div class="nowork" role="note"><strong>${es ? 'Sin EPP completo y sin herramientas completas, no se trabaja.' : 'No complete PPE and no complete tools, no work.'}</strong><span>${es ? 'Quien no lleve todo su equipo de protección y de trabajo no entra al área hasta completarlo. El encargado lo verifica antes de salir.' : 'Anyone without all their protective and work gear does not enter the area until it is complete. The lead verifies before heading out.'}</span></div>`;
+  return `<div class="nowork" role="note"><strong>${es ? 'Sin PPE completo y sin herramientas completas, no se trabaja.' : 'No complete PPE and no complete tools, no work.'}</strong><span>${es ? 'Quien no lleve todo su equipo de protección y de trabajo no entra al área hasta completarlo. El encargado lo verifica antes de salir.' : 'Anyone without all their protective and work gear does not enter the area until it is complete. The lead verifies before heading out.'}</span></div>`;
 }
 function exp(text) { return `<div class="exp"><b>${L(T.ui.exp)}</b><p>${text}</p></div>`; }
 function rule(text) { return `<div class="rule"><span class="tag">${L(T.ui.rule)}</span><p>${text}</p></div>`; }
@@ -973,7 +973,7 @@ function gameHTML() {
   const shown = (!G.start && today) ? Object.fromEntries(items.map(p => [p.k, true])) : G.placed;
   const count = items.filter(p => shown[p.k]).length;
   const best = S.best[S.task];
-  const label = es ? `Muñequito con ${count} de ${items.length} piezas de EPP` : `Figure wearing ${count} of ${items.length} PPE items`;
+  const label = es ? `Muñequito con ${count} de ${items.length} piezas de PPE` : `Figure wearing ${count} of ${items.length} PPE items`;
   const secs = G.end ? (G.end - G.start) / 1000 : (G.start ? (Date.now() - G.start) / 1000 : 0);
   let panel = '';
   if (G.pending) {
@@ -1141,7 +1141,7 @@ function morningHTML() {
   const allStart = START.every((_, i) => isOn('start', i));
   const who = crewTurn(0);
   const forms = [
-    {done: doneToday(), go: 'epp', es: 'EPP del día con el muñequito', en: 'Daily PPE with the figure'},
+    {done: doneToday(), go: 'epp', es: 'PPE del día con el muñequito', en: 'Daily PPE with the figure'},
     {done: packDone('gear'), go: 'carga', es: 'Carga del equipo', en: 'Gear loading'},
     {done: packDone('cooler'), go: 'carga', es: `Hielera y comida${who ? ` (le toca a ${who})` : ''}`, en: `Cooler and food${who ? ` (${who}’s turn)` : ''}`},
     {done: allStart, go: 'carga', es: 'Lista final antes de salir', en: 'Final check before heading out'},
@@ -1155,7 +1155,7 @@ function morningHTML() {
       <span class="score">${n}/${forms.length}</span></div>
     <div class="progress big"><i style="width:${n / forms.length * 100}%"></i></div>
     <ol class="forms">${forms.map(f => `<li class="${f.done ? 'done' : ''}"><span class="box">✓</span><span>${L(f)}</span>${f.done ? `<span class="pill good">${es ? 'Listo' : 'Done'}</span>` : `<button class="btn alt sm" data-go="${f.go}">${es ? 'Llenar' : 'Fill in'}</button>`}</li>`).join('')}</ol>
-    <p class="${ready ? 'pill good' : 'warn-line'}">${ready ? (es ? 'Todo listo. La cuadrilla puede entrar al campo.' : 'All set. The crew can enter the field.') : (es ? 'Nadie entra al campo hasta completar los formularios de hoy. Sin EPP completo y sin herramientas completas, no se trabaja.' : 'No one enters the field until today’s forms are complete. No complete PPE and tools, no work.')}</p>
+    <p class="${ready ? 'pill good' : 'warn-line'}">${ready ? (es ? 'Todo listo. La cuadrilla puede entrar al campo.' : 'All set. The crew can enter the field.') : (es ? 'Nadie entra al campo hasta completar los formularios de hoy. Sin PPE completo y sin herramientas completas, no se trabaja.' : 'No one enters the field until today’s forms are complete. No complete PPE and tools, no work.')}</p>
   </div>`;
 }
 function dayState() {
@@ -1210,7 +1210,7 @@ function checklist(list, store) {
   const es = S.lang === 'es';
   const auto = i => store === 'start' && !!list[i].auto;
   const how = i => ({
-    ppe: {es:'el ejercicio de EPP con el muñequito (paso 1)', en:'the PPE exercise with the figure (step 1)'},
+    ppe: {es:'el ejercicio de PPE con el muñequito (paso 1)', en:'the PPE exercise with the figure (step 1)'},
     gear: {es:'la carga del equipo en la camioneta (arriba)', en:'loading the gear in the truck (above)'},
     cooler: {es:'la hielera del día (arriba)', en:'today’s cooler (above)'},
     ret: {es:'el ejercicio "Regresa todo" (arriba)', en:'the "Return everything" exercise (above)'}
@@ -1248,7 +1248,7 @@ const VIEWS = {
       ${morningHTML()}
       <h2 class="h2">${es ? 'Elige por dónde empezar' : 'Choose where to start'}</h2>
       <div class="paths">
-        <button class="path" data-go="epp"><strong>${es ? '1 · Vístete: EPP del día' : '1 · Suit up: daily PPE'}</strong><span>${es ? 'La ruta completa, en orden.' : 'The full route, in order.'}</span></button>
+        <button class="path" data-go="epp"><strong>${es ? '1 · Vístete: PPE del día' : '1 · Suit up: daily PPE'}</strong><span>${es ? 'La ruta completa, en orden.' : 'The full route, in order.'}</span></button>
         <button class="path" data-go="accidente"><strong>${es ? '6 · Si hay un accidente' : '6 · If there is an accident'}</strong><span>${es ? 'Lo que hay que saber de memoria.' : 'What you must know by heart.'}</span></button>
         <button class="path" data-go="evaluacion"><strong>${es ? 'Ponte a prueba' : 'Test yourself'}</strong><span>${es ? `${QUIZ.length} situaciones reales del sitio.` : `${QUIZ.length} real site situations.`}</span></button>
       </div>
@@ -1259,13 +1259,13 @@ const VIEWS = {
     return `<section class="section">
       <p class="eyebrow">${es ? 'Paso 1 · Todos los días' : 'Step 1 · Every day'}</p>
       <h1 class="h2">${es ? 'Vístete para el campo' : 'Suit up for the field'}</h1>
-      <p class="lead">${es ? 'Ejercicio diario: ponte cada prenda de EPP y confírmala. El muñequito solo se viste con lo que tú ya llevas puesto.' : 'Daily exercise: put on each PPE item and confirm it. The figure only wears what you already have on.'}</p>
+      <p class="lead">${es ? 'Ejercicio diario: ponte cada prenda de PPE y confírmala. El muñequito solo se viste con lo que tú ya llevas puesto.' : 'Daily exercise: put on each PPE item and confirm it. The figure only wears what you already have on.'}</p>
       <h2 class="h3">${es ? '¿Qué vas a hacer hoy?' : 'What are you doing today?'}</h2>
       <div class="chips" role="group">${TASKS.map(t => `<button class="chip" data-task="${t.k}" aria-pressed="${S.task === t.k}">${L(t)}</button>`).join('')}</div>
       ${gameHTML()}
       <p>${es ? 'Lo que la etiqueta del herbicida agregue también es obligatorio.' : 'Anything the herbicide label adds is also mandatory.'}</p>
       ${noWork()}
-      ${exp(es ? '¿Qué pieza de EPP es la que más se quita por el calor? ¿Cómo lo resolvemos como cuadrilla?' : 'Which PPE item comes off most because of the heat? How do we solve that as a crew?')}
+      ${exp(es ? '¿Qué pieza de PPE es la que más se quita por el calor? ¿Cómo lo resolvemos como cuadrilla?' : 'Which PPE item comes off most because of the heat? How do we solve that as a crew?')}
     </section>`;
   },
   carga() {
