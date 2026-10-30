@@ -483,7 +483,7 @@ const TOOLS = [
      {es:'En todo el tocón y el suelo alrededor', en:'All over the stump and surrounding soil'}], a:1,
      wEs:'El tejido vivo está en el anillo exterior; ahí el producto llega a la raíz.', wEn:'The living tissue is in the outer ring; that is where product reaches the root.'}},
   {k:'mtl', es:'Minicargador', en:'Track loader',
-   noteEs:'Basado en el incidente de un incidente real. Acciones correctivas propuestas, pendientes de aprobación final.', noteEn:'Based on a real incident. Corrective actions proposed, pending final approval.',
+   noteEs:'Basado en un incidente real. Acciones correctivas propuestas, pendientes de aprobación final.', noteEn:'Based on a real incident. Corrective actions proposed, pending final approval.',
    steps:[
     {bEs:'Antes de entrar a la fila', bEn:'Before entering the row', es:'Confirmar con O&M la posición y el stow de los trackers y anotarlo en el JHA del día. La inclinación cambia la altura del borde inferior del panel.', en:'Confirm tracker position and stow with O&M and record it in the daily JHA. Tilt changes the height of the panel’s lower edge.'},
     {bEs:'Conoce tu máquina', bEn:'Know your machine', es:'La máquina mide 4 ft 7 in de alto: un panel inclinado puede quedar dentro de esa altura. Al girar, la parte trasera barre hacia el lado contrario (giro de cola).', en:'The machine is 4 ft 7 in tall: a tilted panel can sit inside that height. When turning, the rear sweeps the opposite way (tail swing).'},
@@ -1422,7 +1422,7 @@ const VIEWS = {
       <h2 class="h3">${es ? 'Si alguien se lesiona' : 'If someone is hurt'}</h2>
       <ol class="stop">${ALTO.map(a => `<li><b>${F(a, 'b')}</b><span>${L(a)}</span></li>`).join('')}</ol>
       <h2 class="h3">${es ? 'Si una máquina o herramienta toca un panel o estructura' : 'If a machine or tool contacts a panel or structure'}</h2>
-      <p>${es ? 'Protocolo del incidente de un incidente real. Reportar siempre, nunca ocultar, no intentar reparar ni mover evidencia.' : 'Protocol from a real incident. Always report, never conceal, do not repair or move evidence.'}</p>
+      <p>${es ? 'Protocolo de un incidente real. Reportar siempre, nunca ocultar, no intentar reparar ni mover evidencia.' : 'Protocol from a real incident. Always report, never conceal, do not repair or move evidence.'}</p>
       <ol class="stop contact">${CONTACT.map(a => `<li><b>${F(a, 'b')}</b><span>${L(a)}</span></li>`).join('')}</ol>
       ${reportHTML()}
       <div class="lessons">
