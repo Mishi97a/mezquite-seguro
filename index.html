@@ -1,0 +1,1601 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Módulo de entrenamiento bilingüe para trabajar con mezquite, herbicida y maquinaria junto a paneles solares.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Mezquite Seguro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky field-sign header + hazard stripe, a numbered route of 7 stops, one stop on screen at a time */
+:root {
+  --bg: #EEF2EE;
+  --surface: #FFFFFF;
+  --sunk: #E2E8E3;
+  --ink: #16222A;
+  --muted: #4E5C64;
+  --line: #CBD4CE;
+  --orange: #D9520B;
+  --orange-soft: #FCE6D8;
+  --solar: #1E4B74;
+  --solar-soft: #DCE8F3;
+  --olive: #53652A;
+  --good: #22704A;
+  --good-soft: #DDF1E5;
+  --bad: #A92A20;
+  --bad-soft: #F8E0DD;
+  --f-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", Verdana, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --fs: 1;
+  --sky: #CFE3EE; --sun: #F4B740; --soil: #D9C7A3; --panel: #22466B; --panel-line: #7C9BBA;
+  --canopy: #657A30; --canopy2: #7F9548; --trunk: #6A4A2E; --skin: #B9825A; --hat: #F2C230;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F161B; --surface: #172128; --sunk: #1F2B33; --ink: #E8EEF0; --muted: #A0AEB5; --line: #2D3B44;
+    --orange: #FF7C35; --orange-soft: #3A2417; --solar: #8DBCE8; --solar-soft: #1A2C3D; --olive: #AFC373;
+    --good: #63C990; --good-soft: #15301F; --bad: #FF8D82; --bad-soft: #3A1B19; color-scheme: dark;
+    --sky: #1B2C3A; --sun: #E0A43A; --soil: #3B3326; --panel: #2B5885; --panel-line: #86A8C9;
+    --canopy: #5E722D; --canopy2: #73893F; --trunk: #8A6440; --hat: #E8B92A;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F161B; --surface: #172128; --sunk: #1F2B33; --ink: #E8EEF0; --muted: #A0AEB5; --line: #2D3B44;
+  --orange: #FF7C35; --orange-soft: #3A2417; --solar: #8DBCE8; --solar-soft: #1A2C3D; --olive: #AFC373;
+  --good: #63C990; --good-soft: #15301F; --bad: #FF8D82; --bad-soft: #3A1B19; color-scheme: dark;
+  --sky: #1B2C3A; --sun: #E0A43A; --soil: #3B3326; --panel: #2B5885; --panel-line: #86A8C9;
+  --canopy: #5E722D; --canopy2: #73893F; --trunk: #8A6440; --hat: #E8B92A;
+}
+:root[data-contrast="high"] { --muted: var(--ink); --line: var(--ink); }
+:root[data-size="large"] { --fs: 1.2; }
+
+html { font-size: calc(16px * var(--fs)); }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--ink); }
+* { box-sizing: border-box; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.05; text-wrap: balance; margin: 0; letter-spacing: .01em; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.wrap { max-width: 980px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ink); color: var(--bg); }
+.top .wrap { display: flex; align-items: center; gap: 12px; padding-block: 10px; flex-wrap: wrap; }
+.brand { font-family: var(--f-display); font-weight: 800; font-size: 1.5rem; text-transform: uppercase; letter-spacing: .04em; margin-right: auto; }
+.brand span { color: var(--orange); }
+.tools { display: flex; gap: 6px; flex-wrap: wrap; }
+.tbtn { background: transparent; border: 1.5px solid color-mix(in srgb, var(--bg) 40%, transparent); color: var(--bg); border-radius: 6px; padding: 5px 10px; font-size: .85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+.tbtn[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: #16222A; }
+.tbtn svg { width: 16px; height: 16px; }
+.stripe { height: 10px; background: repeating-linear-gradient(-45deg, var(--orange) 0 14px, var(--ink) 14px 28px); }
+
+/* Route nav */
+.route { overflow-x: auto; background: var(--surface); border-bottom: 1px solid var(--line); }
+.route ol { list-style: none; display: flex; gap: 4px; margin: 0; padding: 10px 0; min-width: max-content; }
+.route button { border: 0; background: transparent; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 8px; font-size: .9rem; font-weight: 700; color: var(--muted); }
+.route button[aria-current="step"] { background: var(--sunk); color: var(--ink); }
+.route .num { font-family: var(--f-mono); width: 26px; height: 26px; border-radius: 50%; border: 2px solid currentColor; display: grid; place-items: center; font-size: .78rem; }
+.route .done .num { background: var(--good); border-color: var(--good); color: var(--surface); }
+.progress { height: 4px; background: var(--sunk); }
+.progress i { display: block; height: 100%; background: var(--good); width: 0; transition: width .4s; }
+
+main { padding-block: 28px 56px; }
+.section { display: grid; gap: 22px; }
+.eyebrow { font-family: var(--f-mono); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
+.h1 { font-size: clamp(2.2rem, 7vw, 3.8rem); font-weight: 800; text-transform: uppercase; }
+.h2 { font-size: 1.7rem; font-weight: 700; }
+.h3 { font-size: 1.3rem; font-weight: 700; }
+.lead { font-size: 1.15rem; max-width: 62ch; color: var(--muted); }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* Callouts */
+.exp { border: 2px dashed var(--solar); background: var(--solar-soft); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; }
+.exp b { font-family: var(--f-display); font-size: 1.15rem; text-transform: uppercase; color: var(--solar); letter-spacing: .03em; }
+.rule { background: var(--ink); color: var(--bg); border-radius: 10px; padding: 14px 18px; display: flex; gap: 14px; align-items: center; }
+.rule .tag { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; background: var(--orange); color: #16222A; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+.rule p { font-family: var(--f-display); font-size: 1.45rem; font-weight: 700; line-height: 1.15; }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: stretch; }
+.hero-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 12px; align-content: start; }
+.why { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.why li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; }
+.why .dot { width: 28px; height: 28px; border-radius: 6px; background: var(--orange-soft); color: var(--orange); display: grid; place-items: center; font-weight: 700; font-family: var(--f-mono); font-size: .8rem; }
+.paths { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.path { text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 4px; }
+.path:hover { border-color: var(--orange); }
+.path strong { font-family: var(--f-display); font-size: 1.2rem; }
+.path span { color: var(--muted); font-size: .92rem; }
+
+/* PPE */
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 16px; font-weight: 700; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.ppe { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.ppe button { text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 8px; align-content: start; min-height: 150px; position: relative; }
+.ppe button svg { width: 34px; height: 34px; color: var(--solar); }
+.ppe button .name { font-weight: 700; line-height: 1.25; }
+.ppe button .chk { font-size: .85rem; color: var(--muted); }
+.ppe button.off { opacity: .4; }
+.ppe button[aria-pressed="true"] { border-color: var(--good); background: var(--good-soft); }
+.ppe button[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 10px; right: 12px; width: 26px; height: 26px; border-radius: 50%; background: var(--good); color: var(--surface); display: grid; place-items: center; font-weight: 700; }
+.status { border-radius: 10px; padding: 12px 16px; font-weight: 700; display: flex; gap: 10px; align-items: center; }
+.status.wait { background: var(--orange-soft); color: var(--ink); }
+.status.ok { background: var(--good-soft); color: var(--good); }
+
+/* Checklists */
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.checks button { width: 100%; text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: center; }
+.checks .box { width: 28px; height: 28px; border-radius: 6px; border: 2px solid var(--muted); display: grid; place-items: center; font-weight: 700; color: transparent; }
+.checks button[aria-pressed="true"] { border-color: var(--good); }
+.checks button[aria-pressed="true"] .box { background: var(--good); border-color: var(--good); color: var(--surface); }
+.scene-sm { width: 100%; height: auto; max-width: 360px; }
+.item .tick { width: 28px; height: 28px; border-radius: 6px; border: 2px solid var(--muted); display: grid; place-items: center; color: var(--surface); font-weight: 700; }
+.item.on .tick { background: var(--good); border-color: var(--good); }
+.nowork { border: 3px solid var(--bad); border-radius: 12px; padding: 14px 16px 14px 22px; display: grid; gap: 4px; background: var(--bad-soft); position: relative; overflow: hidden; }
+.nowork::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 10px; background: repeating-linear-gradient(-45deg, var(--bad) 0 8px, var(--surface) 8px 16px); }
+.nowork strong { font-family: var(--f-display); font-size: 1.45rem; line-height: 1.1; text-transform: uppercase; color: var(--bad); }
+.heat { border-left: 6px solid var(--bad); background: var(--surface); border-radius: 0 10px 10px 0; padding: 14px 18px; display: grid; gap: 8px; }
+.heat ul { margin: 0; padding-left: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 4px 16px; }
+.turn { display: grid; gap: 4px; }
+.lab2 { font-size: .85rem; font-weight: 700; color: var(--muted); }
+textarea { font: inherit; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); width: 100%; resize: vertical; }
+.game { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 18px; align-items: start; }
+.stagep { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 8px; justify-items: center; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 72px); }
+.avatar { width: 100%; max-width: 250px; height: auto; }
+.timer { font-family: var(--f-mono); font-size: 2.4rem; font-variant-numeric: tabular-nums; line-height: 1; }
+.hud { display: flex; justify-content: space-between; width: 100%; gap: 8px; flex-wrap: wrap; }
+.pill { font-family: var(--f-mono); font-size: .78rem; padding: 4px 10px; border-radius: 999px; background: var(--sunk); justify-self: start; width: fit-content; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.warn { background: var(--orange-soft); color: var(--ink); }
+.closet { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.item { text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px; display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: center; font-weight: 700; line-height: 1.25; }
+.item svg { width: 30px; height: 30px; color: var(--solar); }
+.item:hover:not([disabled]) { border-color: var(--orange); }
+.item[disabled] { cursor: default; }
+.item.on { border-color: var(--good); background: var(--good-soft); }
+.item.on svg { color: var(--good); }
+.item.pend { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-soft); }
+.confirm { background: var(--ink); color: var(--bg); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; }
+.confirm .btn { background: var(--orange); color: #16222A; }
+.confirm .btn.alt { background: transparent; color: var(--bg); border-color: var(--bg); }
+.result { border: 3px solid var(--good); background: var(--good-soft); border-radius: 12px; padding: 16px; display: grid; gap: 8px; }
+.result .warn { background: var(--orange-soft); border-radius: 8px; padding: 8px 12px; }
+.week { display: flex; gap: 6px; flex-wrap: wrap; }
+.week span { width: 40px; text-align: center; font-size: .72rem; color: var(--muted); display: grid; gap: 3px; }
+.week i { display: block; height: 10px; border-radius: 3px; background: var(--line); }
+.week .y i { background: var(--good); }
+.pop { animation: pop .45s ease; transform-box: fill-box; transform-origin: center; }
+@keyframes pop { 0% { opacity: 0; transform: scale(.6); } 70% { transform: scale(1.06); } 100% { opacity: 1; transform: scale(1); } }
+.sign { background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; }
+.sign.ok { border-color: var(--good); background: var(--good-soft); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.sign .who { font-family: var(--f-display); font-size: 1.4rem; font-weight: 700; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field label { font-size: .85rem; font-weight: 700; color: var(--muted); }
+select { font: inherit; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.checks button.auto { cursor: default; }
+.checks button.lock { border-style: dashed; border-color: var(--orange); }
+.checks small { display: block; color: var(--muted); font-size: .85rem; margin-top: 2px; }
+.counter { font-family: var(--f-mono); font-size: .9rem; color: var(--muted); }
+
+/* Tool tabs */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 2px solid var(--line); }
+.tab { border: 0; background: transparent; padding: 10px 14px; font-family: var(--f-display); font-size: 1.15rem; font-weight: 700; color: var(--muted); border-bottom: 4px solid transparent; margin-bottom: -2px; }
+.tab[aria-selected="true"] { color: var(--ink); border-color: var(--orange); }
+.morning { background: var(--surface); border: 3px solid var(--orange); border-radius: 14px; padding: 18px; display: grid; gap: 12px; }
+.morning.ok { border-color: var(--good); }
+.progress.big { height: 10px; border-radius: 5px; overflow: hidden; }
+.forms { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.forms li { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.forms .box { width: 28px; height: 28px; border-radius: 6px; border: 2px solid var(--muted); display: grid; place-items: center; color: transparent; font-weight: 700; }
+.forms li.done .box { background: var(--good); border-color: var(--good); color: var(--surface); }
+.btn.sm { padding: 6px 14px; font-size: .9rem; }
+.warn-line { background: var(--orange-soft); border-radius: 8px; padding: 10px 14px; font-weight: 700; }
+.daygrid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.water { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; grid-template-columns: 110px 1fr; gap: 16px; align-items: center; }
+.drop { width: 100%; height: auto; }
+.stop.contact li { border-top-color: var(--orange); }
+.stop.contact li::before { color: var(--orange); }
+.report .repgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.report input[type="text"] { width: 100%; }
+.tickrow { display: flex; gap: 8px; align-items: center; font-weight: 700; }
+.tickrow input { width: 20px; height: 20px; accent-color: var(--good); }
+.issues { margin: 0; padding: 10px 14px 10px 30px; background: var(--orange-soft); border-radius: 8px; display: grid; gap: 4px; }
+#rep-text { font-family: var(--f-mono); font-size: .85rem; }
+.notify { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 2px; user-select: text; }
+.lessons { display: grid; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.lessons .do ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.maint { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.maint > div { background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--solar); border-radius: 10px; padding: 14px; display: grid; gap: 6px; align-content: start; }
+.maint ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.split { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: start; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.steps li::before { content: counter(s); font-family: var(--f-display); font-weight: 800; font-size: 1.6rem; color: var(--orange); line-height: 1; }
+.steps b { display: block; }
+
+/* Quiz */
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 12px; }
+.q .qtext { font-weight: 700; font-size: 1.08rem; }
+.opts { display: grid; gap: 8px; }
+.opt { text-align: left; border: 1.5px solid var(--line); background: var(--bg); border-radius: 8px; padding: 10px 14px; display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: center; }
+.opt .k { font-family: var(--f-mono); width: 28px; height: 28px; border-radius: 6px; background: var(--sunk); display: grid; place-items: center; font-size: .85rem; }
+.opt:hover:not([disabled]) { border-color: var(--solar); }
+.opt[disabled] { cursor: default; }
+.opt.right { border-color: var(--good); background: var(--good-soft); }
+.opt.right .k { background: var(--good); color: var(--surface); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.wrong .k { background: var(--bad); color: var(--surface); }
+.fb { border-radius: 8px; padding: 10px 14px; font-size: .95rem; }
+.fb.ok { background: var(--good-soft); }
+.fb.no { background: var(--bad-soft); }
+.qhead { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+.score { font-family: var(--f-display); font-size: 3.4rem; font-weight: 800; line-height: 1; }
+.badge { border: 3px solid var(--good); border-radius: 14px; padding: 20px; display: grid; gap: 10px; background: var(--good-soft); }
+.badge.retry { border-color: var(--orange); background: var(--orange-soft); }
+
+/* Accident */
+.stop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; counter-reset: a; list-style: none; padding: 0; margin: 0; }
+.stop li { counter-increment: a; background: var(--surface); border: 1px solid var(--line); border-top: 6px solid var(--bad); border-radius: 10px; padding: 14px; display: grid; gap: 4px; align-content: start; }
+.stop li::before { content: counter(a); font-family: var(--f-display); font-size: 2rem; font-weight: 800; color: var(--bad); line-height: 1; }
+.stop b { font-family: var(--f-display); font-size: 1.3rem; text-transform: uppercase; }
+.types { display: grid; gap: 8px; }
+details.type { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+details.type summary { padding: 12px 16px; font-weight: 700; cursor: pointer; list-style-position: outside; }
+details.type[open] summary { border-bottom: 1px solid var(--line); }
+.do { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.do > div { padding: 12px 16px; display: grid; gap: 4px; }
+.do .y { border-right: 1px solid var(--line); }
+.do .lab { font-family: var(--f-mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; }
+.do .y .lab { color: var(--good); }
+.do .n .lab { color: var(--bad); }
+.phones { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.phone { background: var(--bad); color: #fff; border-radius: 10px; padding: 14px 16px; display: grid; gap: 2px; }
+.phone .lab { font-size: .85rem; opacity: .9; }
+.phone .nb { font-family: var(--f-mono); font-size: 1.5rem; user-select: all; }
+.near { border-left: 6px solid var(--orange); background: var(--surface); border-radius: 0 10px 10px 0; padding: 14px 18px; display: grid; gap: 8px; }
+.near ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+
+/* Timeline */
+.tl { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.tl li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; position: relative; padding-bottom: 18px; }
+.tl li::before { content: ""; position: absolute; left: 21px; top: 36px; bottom: 0; width: 2px; background: var(--line); }
+.tl li:last-child::before { display: none; }
+.tl .n { width: 44px; height: 36px; border-radius: 8px; background: var(--solar); color: var(--surface); font-family: var(--f-mono); display: grid; place-items: center; font-size: .9rem; }
+.tl .when { font-family: var(--f-mono); font-size: .78rem; color: var(--orange); letter-spacing: .05em; }
+
+/* Glossary */
+.gloss { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.term { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; }
+.term .en { font-family: var(--f-mono); color: var(--solar); font-size: .95rem; }
+.term .es { font-weight: 700; }
+.term .d { color: var(--muted); font-size: .92rem; }
+.udl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.udl > div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 6px; align-content: start; }
+.udl b { font-family: var(--f-display); font-size: 1.2rem; }
+
+/* Pager */
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.btn { border: 0; border-radius: 8px; padding: 12px 20px; font-weight: 700; font-size: 1rem; background: var(--ink); color: var(--bg); }
+.btn.alt { background: transparent; color: var(--ink); border: 2px solid var(--ink); }
+.btn.go { background: var(--orange); color: #16222A; }
+a { color: var(--solar); font-weight: 700; }
+input[type="text"] { font: inherit; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); width: min(100%, 320px); }
+
+/* Intro video + example images */
+.video { background: var(--ink); border-radius: 14px; overflow: hidden; display: grid; }
+.stage { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: var(--sky); }
+.stage .scene { position: absolute; inset: 0; width: 100%; height: 100%; animation: fade .7s ease; }
+.overlay { position: absolute; left: 0; right: 0; top: 0; padding: 4% 5%; display: grid; gap: 4px; pointer-events: none; }
+.overlay .vt { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.6rem, 6vw, 3.4rem); line-height: .95; color: var(--ink); }
+.overlay .vt span { color: var(--orange); }
+.overlay .vs { font-family: var(--f-mono); font-size: clamp(.7rem, 1.8vw, .9rem); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+.bigplay { position: absolute; left: 50%; top: 58%; transform: translate(-50%, -50%); border: 0; border-radius: 999px; background: var(--orange); color: #16222A; font-weight: 700; font-size: 1.1rem; padding: 14px 26px; display: flex; gap: 10px; align-items: center; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+.bigplay svg { width: 20px; height: 20px; }
+.cap { color: #F3F5F1; background: var(--ink); padding: 12px 18px; min-height: 3.4em; font-size: 1.05rem; line-height: 1.45; }
+.cap[hidden] { display: none !important; }
+.vbar { display: flex; align-items: center; gap: 8px; padding: 8px 12px 12px; background: var(--ink); flex-wrap: wrap; }
+.vbtn { background: transparent; border: 1.5px solid #5B6A73; color: #F3F5F1; border-radius: 6px; padding: 5px 10px; font-size: .85rem; font-weight: 700; min-width: 38px; }
+.vbtn[aria-pressed="true"] { background: #F3F5F1; color: #16222A; border-color: #F3F5F1; }
+.vdots { display: flex; gap: 4px; flex: 1; min-width: 120px; }
+.vdots button { flex: 1; height: 6px; border: 0; border-radius: 3px; background: #44525B; padding: 0; }
+.vdots button.on { background: var(--orange); }
+.vdots button.seen { background: #9AA7AE; }
+.vtime { font-family: var(--f-mono); font-size: .8rem; color: #C3CDD2; }
+.fig { margin: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--sky); }
+.fig svg { display: block; width: 100%; height: auto; }
+.fig figcaption { background: var(--surface); padding: 8px 14px; font-size: .88rem; color: var(--muted); border-top: 1px solid var(--line); }
+.fig figcaption b { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--orange); margin-right: 6px; }
+.zone { animation: march 1.2s linear infinite; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes march { to { stroke-dashoffset: -24; } }
+
+@media (max-width: 760px) {
+  .hero, .split { grid-template-columns: 1fr; }
+  .paths, .udl { grid-template-columns: 1fr; }
+  .game, .maint, .report .repgrid, .daygrid { grid-template-columns: 1fr; }
+  .water { grid-template-columns: 80px 1fr; }
+  .stagep { position: static; }
+  .avatar { max-width: 190px; }
+  .ppe { grid-template-columns: repeat(2, 1fr); }
+  .stop { grid-template-columns: 1fr 1fr; }
+  .gloss { grid-template-columns: 1fr; }
+  .do { grid-template-columns: 1fr; }
+  .do .y { border-right: 0; border-bottom: 1px solid var(--line); }
+  .rule { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Mezquite <span>Seguro</span></div>
+    <div class="tools" role="toolbar" aria-label="Opciones de aprendizaje">
+      <button class="tbtn" id="b-es" data-lang="es">ES</button>
+      <button class="tbtn" id="b-en" data-lang="en">EN</button>
+      <button class="tbtn" id="b-listen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg><span id="t-listen">Escuchar</span></button>
+      <button class="tbtn" id="b-size" aria-pressed="false">A+</button>
+      <button class="tbtn" id="b-contrast" aria-pressed="false"><span id="t-contrast">Contraste</span></button>
+    </div>
+  </div>
+  <div class="stripe" aria-hidden="true"></div>
+</header>
+<nav class="route" aria-label="Ruta del módulo"><div class="wrap"><ol id="route"></ol></div></nav>
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
+<main class="wrap" id="main" tabindex="-1"></main>
+
+<script>
+const ICON = {
+  helmet: '<path d="M4 16a8 8 0 0 1 16 0v1H4z"/><path d="M12 8v4M2 17h20"/><path d="M5 17v3h3v-3M16 17v3h3v-3"/>',
+  glasses: '<path d="M2 10h20"/><path d="M4 10v3a3 3 0 0 0 6 0v-3M14 10v3a3 3 0 0 0 6 0v-3"/>',
+  chaps: '<path d="M7 3h10l-1 18h-3l-1-10-1 10H8z"/><path d="M8 8h8"/>',
+  glove: '<path d="M7 21v-7L5 11l1-1 3 2V5a1 1 0 0 1 2 0v5V4a1 1 0 0 1 2 0v6V5a1 1 0 0 1 2 0v6V8a1 1 0 0 1 2 0v7l-2 6z"/>',
+  chem: '<path d="M6 21v-7L4 11l1-1 3 2V5a1 1 0 0 1 2 0v5V4a1 1 0 0 1 2 0v6V6a1 1 0 0 1 2 0v9l-2 6z"/><path d="M19 3c1.2 1.6 1.8 2.6 1.8 3.4a1.8 1.8 0 0 1-3.6 0c0-.8.6-1.8 1.8-3.4z"/>',
+  shirt: '<path d="M8 3 3 6l2 4 2-1v12h10V9l2 1 2-4-5-3a4 4 0 0 1-8 0z"/>',
+  boots: '<path d="M6 3h6v10l7 3v4H5z"/><path d="M5 17h14"/>',
+  hat: '<path d="M6 14a6 6 0 0 1 12 0"/><path d="M2 15c3 2.2 17 2.2 20 0"/><path d="M12 8v3"/>',
+  radio: '<rect x="7" y="7" width="10" height="15" rx="2"/><path d="M14 7V2"/><path d="M9.5 11h5M9.5 14h5"/>',
+  pants: '<path d="M6 3h12l1 18h-5l-2-11-2 11H5z"/>',
+  gaiter: '<path d="M7 2h7v12l6 3v4H5v-7l2-1z"/><path d="M7 5h7M7 8.5h7M7 12h7"/><path d="M2 21c1.5-2 3-2 4.5 0"/>',
+  vest: '<path d="M8 3 5 6v15h5V9M16 3l3 3v15h-5V9M8 3l4 5 4-5"/><path d="M5 14h5M14 14h5"/>'
+};
+
+const T = {
+  nav: [
+    {id:'inicio', es:'Inicio', en:'Start'},
+    {id:'epp', es:'EPP del día', en:'Daily PPE'},
+    {id:'carga', es:'Equipo y hielera', en:'Gear & cooler'},
+    {id:'equipo', es:'Manejo del equipo', en:'Equipment handling'},
+    {id:'jornada', es:'Durante la jornada', en:'During the day'},
+    {id:'salida', es:'Al salir del campo', en:'Leaving the field'},
+    {id:'accidente', es:'Si hay un accidente', en:'If there is an accident'},
+    {id:'nuevo', es:'Nuevo accidente', en:'A new accident'},
+    {id:'evaluacion', es:'Evaluación', en:'Assessment'},
+    {id:'glosario', es:'Glosario y DUA', en:'Glossary & UDL'}
+  ],
+  ui: {
+    listen:{es:'Escuchar',en:'Listen'}, stop:{es:'Detener',en:'Stop'}, contrast:{es:'Contraste',en:'Contrast'},
+    prev:{es:'Anterior',en:'Back'}, next:{es:'Siguiente',en:'Next'},
+    exp:{es:'Tu experiencia',en:'Your experience'}, rule:{es:'Regla de oro',en:'Golden rule'},
+    quick:{es:'Pregunta rápida',en:'Quick check'}, ok:{es:'Correcto.',en:'Correct.'}, no:{es:'Revisa esto.',en:'Look again.'},
+    of:{es:'de',en:'of'}, done:{es:'listos',en:'done'}
+  }
+};
+
+const ALL = ['saw', 'cut', 'herb'];
+const PPE = [
+  {k:'shirt', icon:'shirt', es:'Camisa de manga larga', en:'Long-sleeve shirt', need:ALL, cEs:'Limpia, sin químico de ayer.', cEn:'Clean, no chemical from yesterday.'},
+  {k:'pants', icon:'pants', es:'Pantalón largo', en:'Long pants', need:ALL, cEs:'Sin roturas.', cEn:'No tears.'},
+  {k:'boots', icon:'boots', es:'Botas con casquillo', en:'Steel-toe boots', need:ALL, cEs:'Suela en buen estado; impermeables si aplicas herbicida.', cEn:'Soles in good shape; waterproof if applying herbicide.'},
+  {k:'snake', icon:'gaiter', es:'Polainas contra serpientes', en:'Snake chaps', need:ALL, cEs:'Cubren de tobillo a rodilla, sin roturas.', cEn:'Cover ankle to knee, no tears.'},
+  {k:'chaps', icon:'chaps', es:'Chaparreras anticorte', en:'Chainsaw chaps', need:['saw'], cEs:'Sin cortes ni fibras expuestas.', cEn:'No cuts or exposed fibers.'},
+  {k:'vest', icon:'vest', es:'Chaleco de alta visibilidad', en:'High-visibility vest', need:ALL, cEs:'Limpio y visible para operadores.', cEn:'Clean and visible to operators.'},
+  {k:'radio', icon:'radio', es:'Radio', en:'Radio', need:ALL, cEs:'Batería cargada y en el canal de la cuadrilla.', cEn:'Battery charged, on the crew channel.'},
+  {k:'leather', icon:'glove', es:'Guantes de cuero', en:'Leather gloves', need:['saw', 'cut'], cEs:'Sin hoyos.', cEn:'No holes.'},
+  {k:'chem', icon:'chem', es:'Guantes resistentes a químicos', en:'Chemical-resistant gloves', need:['herb'], cEs:'Sin perforaciones; manga por fuera del guante.', cEn:'No punctures; sleeve over the glove.'},
+  {k:'glasses', icon:'glasses', es:'Lentes de seguridad', en:'Safety glasses', need:ALL, cEs:'ANSI Z87.1, limpios, sin rayones.', cEn:'ANSI Z87.1, clean, no scratches.'},
+  {k:'screen', icon:'helmet', es:'Careta de malla y protección auditiva', en:'Mesh face screen and hearing protection', need:['saw', 'cut'], cEs:'Careta fija, orejeras completas.', cEn:'Screen secure, earmuffs complete.'},
+  {k:'hat', icon:'hat', es:'Casco con ala para sombra', en:'Hard hat with sun brim', need:ALL, cEs:'Sin grietas, suspensión ajustada.', cEn:'No cracks, suspension adjusted.'}
+];
+const TASKS = [{k:'saw',es:'Motosierra',en:'Chainsaw'},{k:'cut',es:'Desbrozadora',en:'Brush cutter'},{k:'herb',es:'Herbicida',en:'Herbicide'}];
+
+const START = [
+  {es:'Charla de seguridad de 5 minutos realizada', en:'5-minute safety talk held'},
+  {auto:'ppe', es:'EPP completo y en buen estado', en:'PPE complete and in good condition'},
+  {auto:'gear', es:'Equipo de trabajo cargado y asegurado', en:'Work gear loaded and secured'},
+  {auto:'cooler', es:'Hielera lista: comida, hielo, agua, electrolitos y fruta', en:'Cooler ready: food, ice, water, electrolytes and fruit'},
+  {es:'Revisión del vehículo completada', en:'Vehicle check completed'},
+  {es:'Posición de los trackers confirmada con O&M y anotada en el JHA', en:'Tracker position confirmed with O&M and recorded in the JHA'},
+  {es:'Herramientas inspeccionadas con su lista', en:'Tools inspected with their checklist'},
+  {es:'Bloque PCS revisado en el mapa aéreo: paneles, cables, área de equipo y rutas de entrada, salida y vuelta', en:'PCS block reviewed on the aerial map: panels, cables, equipment area and entry, exit and turnaround routes'},
+  {es:'Clima revisado: viento, calor, tormentas; plan de hidratación', en:'Weather checked: wind, heat, storms; hydration plan'},
+  {es:'Etiqueta y hoja de seguridad (SDS) del herbicida en la camioneta', en:'Herbicide label and SDS in the truck'},
+  {es:'Botiquín, agua limpia para ojos y kit de derrames a la mano', en:'First aid kit, clean eyewash water and spill kit at hand'},
+  {es:'Teléfono con señal y dirección del sitio anotada', en:'Phone with signal and site address written down'},
+  {es:'Roles confirmados: operador, vigía y encargado de hielera', en:'Roles confirmed: operator, spotter and cooler lead'},
+  {es:'Todos conocen el punto de reunión y la ruta al hospital', en:'Everyone knows the muster point and route to the hospital'}
+];
+
+const TOOLS = [
+  {k:'saw', es:'Motosierra', en:'Chainsaw',
+   steps:[
+    {bEs:'Revisar', bEn:'Check', es:'Cadena afilada y tensada, freno de cadena, captor de cadena, seguro del gatillo, sin fugas.', en:'Sharp, tensioned chain, chain brake, chain catcher, throttle lockout, no leaks.'},
+    {bEs:'Cargar combustible', bEn:'Refuel', es:'Motor frío, a 3 m (10 ft) del lugar de arranque y lejos de paneles.', en:'Engine cool, 3 m (10 ft) from the starting spot and away from panels.'},
+    {bEs:'Arrancar', bEn:'Start', es:'En el suelo, con el freno de cadena activado. Nunca al aire.', en:'On the ground, chain brake on. Never drop-start.'},
+    {bEs:'Operar', bEn:'Operate', es:'Dos manos, pulgar envolviendo la manija, cuerpo fuera de la línea de la cadena. No cortar con la punta.', en:'Both hands, thumb wrapped, body out of the chain line. Never cut with the tip.'},
+    {bEs:'Cerca de paneles', bEn:'Near panels', es:'Caída planeada lejos del panel, cortes por secciones, vigía confirma zona libre.', en:'Fall planned away from the panel, sectional cuts, spotter confirms clear zone.'}
+   ],
+   ruleEs:'Si no sé hacia dónde va a caer, no corto.', ruleEn:"If I don't know where it will fall, I don't cut.",
+   expEs:'¿Qué señales te dicen que un mezquite va a caer hacia donde no quieres?', expEn:'What signs tell you a mesquite will fall where you don’t want it to?',
+   q:{es:'¿Dónde se arranca la motosierra?', en:'Where do you start the chainsaw?', o:[
+     {es:'Dejándola caer mientras jalas la cuerda', en:'Dropping it while pulling the cord'},
+     {es:'En el suelo, con el freno de cadena activado', en:'On the ground with the chain brake on'},
+     {es:'Sobre la caja de la camioneta', en:'On the truck bed'}], a:1,
+     wEs:'En el suelo y con freno: si la cadena gira al arrancar, no alcanza a nadie.', wEn:'On the ground with the brake on: if the chain moves at start, it reaches no one.'}},
+  {k:'cut', es:'Desbrozadora', en:'Brush cutter',
+   steps:[
+    {bEs:'Revisar la cuchilla', bEn:'Check the blade', es:'Cuchilla de sierra afilada, sin grietas ni dientes doblados o faltantes. Protector metálico de cuchilla correcto para ese disco. Tuerca, copa y arandela apretadas.', en:'Saw blade sharp, no cracks, no bent or missing teeth. Correct metal blade guard for that blade. Nut, cup and washer tight.'},
+    {bEs:'Ajustar', bEn:'Adjust', es:'Arnés y manubrio de bicicleta a tu altura: al soltar los brazos, la cuchilla queda paralela al suelo y a unos centímetros de él.', en:'Harness and bike handle set to your height: arms relaxed, the blade sits level, a few inches off the ground.'},
+    {bEs:'Combustible', bEn:'Fuel', es:'Mezcla de gasolina y aceite de 2 tiempos en la proporción del manual. Motor frío, a 3 m (10 ft) del lugar de arranque y lejos de paneles.', en:'Gas and 2-stroke oil at the ratio in the manual. Engine cool, 3 m (10 ft) from the starting spot and away from panels.'},
+    {bEs:'Despejar y zona de exclusión', bEn:'Clear and exclusion zone', es:'Retirar piedras y alambres. Nadie a menos de 15 m (50 ft); si un panel queda dentro, barrera o herramienta manual.', en:'Remove rocks and wire. No one within 15 m (50 ft); if a panel is inside it, barrier or hand tool.'},
+    {bEs:'Arrancar', bEn:'Start', es:'Apoyada en el suelo, con la cuchilla sin tocar nada.', en:'Resting on the ground, blade touching nothing.'},
+    {bEs:'Cortar', bEn:'Cut', es:'Acelerador a fondo antes de tocar la madera. Cortar con el lado izquierdo-frontal de la cuchilla. Nunca con la zona entre las 12 y las 3 del reloj: ahí la cuchilla rebota con fuerza (empuje de cuchilla). Tallos gruesos van con motosierra.', en:'Full throttle before touching wood. Cut with the left-front of the blade. Never with the 12 to 3 o’clock zone: the blade thrusts hard there (blade thrust). Thick stems go to the chainsaw.'},
+    {bEs:'Detener y transportar', bEn:'Stop and carry', es:'Soltar el acelerador y esperar a que la cuchilla pare. Moverse y transportar con el motor apagado y la cubierta de la cuchilla puesta.', en:'Release the throttle and wait for the blade to stop. Move and carry with the engine off and the blade cover on.'}
+   ],
+   ruleEs:'Si no sé hacia dónde va a volar, no corto.', ruleEn:"If I don't know where it will fly, I don't cut.",
+   expEs:'¿Alguna vez te ha pasado cerca una piedra lanzada? ¿Qué la causó?', expEn:'Has a thrown rock ever passed close to you? What caused it?',
+   q:{es:'Un panel está a 8 m de donde vas a desbrozar. ¿Qué haces?', en:'A panel is 8 m from where you will cut. What do you do?', o:[
+     {es:'Instalo una barrera o cambio a herramienta manual', en:'Install a barrier or switch to a hand tool'},
+     {es:'Corto con cuidado y despacio', en:'Cut carefully and slowly'},
+     {es:'Le pido a mi compañero que vigile y sigo', en:'Ask my partner to watch and keep going'}], a:0,
+     wEs:'8 m está dentro de la zona de 15 m: la piedra no sabe que vas despacio.', wEn:'8 m is inside the 15 m zone: a rock doesn’t know you are going slowly.'}},
+  {k:'hand', es:'Herramientas manuales', en:'Hand tools',
+   steps:[
+    {bEs:'Revisar', bEn:'Check', es:'Filo, mangos y tornillos firmes. Machete siempre en funda al caminar.', en:'Edge, handles and bolts firm. Machete always sheathed while walking.'},
+    {bEs:'Sujetar', bEn:'Hold', es:'Sujetar la rama y cortar del lado opuesto al panel.', en:'Hold the branch and cut from the side opposite the panel.'},
+    {bEs:'Distancia', bEn:'Distance', es:'Un brazo más la herramienta lejos del panel y de otras personas.', en:'One arm plus the tool away from the panel and other people.'}
+   ],
+   ruleEs:'Ramas hacia afuera, nunca hacia el panel.', ruleEn:'Branches out, never toward the panel.',
+   expEs:'¿Qué truco usas para que una rama con tensión no salte?', expEn:'What trick do you use so a tensioned branch doesn’t spring back?',
+   q:{es:'¿Cómo llevas el machete al caminar entre filas?', en:'How do you carry the machete between rows?', o:[
+     {es:'En la mano, listo para usar', en:'In hand, ready to use'},
+     {es:'Colgado del cinturón sin funda', en:'Hanging from the belt, unsheathed'},
+     {es:'En su funda', en:'In its sheath'}], a:2,
+     wEs:'Con funda no hay golpe accidental a una persona, al vidrio ni a un cable.', wEn:'Sheathed means no accidental strike on a person, glass or cable.'}},
+  {k:'herb', es:'Herbicida', en:'Herbicide',
+   steps:[
+    {bEs:'Revisar', bEn:'Check', es:'Mochila sin fugas, manguera y válvula en buen estado, boquilla correcta.', en:'No leaks, hose and valve in good shape, correct nozzle.'},
+    {bEs:'Mezclar', bEn:'Mix', es:'Según la etiqueta, en área designada lejos de paneles y drenajes, con EPP.', en:'Per the label, in a designated area away from panels and drains, with PPE.'},
+    {bEs:'Aplicar', bEn:'Apply', es:'Al anillo exterior del tocón o a la corteza, chorro dirigido o pincel, en el tiempo de la etiqueta.', en:'To the outer ring of the stump or the bark, directed stream or brush, within the label time.'},
+    {bEs:'Detener', bEn:'Stop', es:'Si el viento lleva el rocío hacia equipos, personas o agua (más de 10 mph o según etiqueta).', en:'If wind carries spray toward equipment, people or water (over 10 mph or per label).'},
+    {bEs:'Salpicaduras', bEn:'Splashes', es:'Limpiar de inmediato con agua y reportar contacto con paneles o cables.', en:'Wipe immediately with water and report contact with panels or cables.'}
+   ],
+   ruleEs:'Sin etiqueta leída, no hay mezcla.', ruleEn:'No label read, no mix.',
+   expEs:'¿Qué parte de la etiqueta es la más difícil de entender? La leemos juntos.', expEn:'Which part of the label is hardest to understand? We read it together.',
+   q:{es:'¿Dónde se aplica el herbicida en un tocón recién cortado?', en:'Where does herbicide go on a fresh-cut stump?', o:[
+     {es:'Solo en el centro del tocón', en:'Only in the center of the stump'},
+     {es:'En el anillo exterior, junto a la corteza', en:'On the outer ring, next to the bark'},
+     {es:'En todo el tocón y el suelo alrededor', en:'All over the stump and surrounding soil'}], a:1,
+     wEs:'El tejido vivo está en el anillo exterior; ahí el producto llega a la raíz.', wEn:'The living tissue is in the outer ring; that is where product reaches the root.'}},
+  {k:'mtl', es:'Minicargador', en:'Track loader',
+   noteEs:'Basado en el incidente de un incidente real. Acciones correctivas propuestas, pendientes de aprobación final.', noteEn:'Based on a real incident. Corrective actions proposed, pending final approval.',
+   steps:[
+    {bEs:'Antes de entrar a la fila', bEn:'Before entering the row', es:'Confirmar con O&M la posición y el stow de los trackers y anotarlo en el JHA del día. La inclinación cambia la altura del borde inferior del panel.', en:'Confirm tracker position and stow with O&M and record it in the daily JHA. Tilt changes the height of the panel’s lower edge.'},
+    {bEs:'Conoce tu máquina', bEn:'Know your machine', es:'La máquina mide 4 ft 7 in de alto: un panel inclinado puede quedar dentro de esa altura. Al girar, la parte trasera barre hacia el lado contrario (giro de cola).', en:'The machine is 4 ft 7 in tall: a tilted panel can sit inside that height. When turning, the rear sweeps the opposite way (tail swing).'},
+    {bEs:'Distancia mínima', bEn:'Minimum offset', es:'Mantener la distancia mínima a los bordes de los módulos (valor por definir). Dentro de esa zona trabaja la cuadrilla a mano o en ATV.', en:'Keep the minimum offset from module edges (value to be set). Inside that zone, the hand or ATV crew works.'},
+    {bEs:'Dentro de la fila', bEn:'Inside the row', es:'Entrar y salir recto. Prohibido el giro sobre el eje (pivote o contrarrotación).', en:'Enter and exit straight. No pivot or counter-rotation turns.'},
+    {bEs:'Dónde girar', bEn:'Where to turn', es:'Solo en pasillos de manejo o cabeceras (headlands).', en:'Only in drive aisles or headlands.'},
+    {bEs:'Vigía', bEn:'Spotter', es:'Un vigía guía cada maniobra cerca de los paneles.', en:'A spotter guides every maneuver near panels.'},
+    {bEs:'Si hay contacto', bEn:'If there is contact', es:'Detener y seguir el protocolo de contacto con panel del paso 6.', en:'Stop and follow the panel-contact protocol in step 6.'}
+   ],
+   ruleEs:'Recto en la fila, giro en el pasillo.', ruleEn:'Straight in the row, turn in the aisle.',
+   expEs:'¿En qué momento de la maniobra no se ve la parte trasera de la máquina? ¿Cómo lo resolvemos?', expEn:'At what point in a maneuver can’t you see the rear of the machine? How do we solve that?',
+   q:{es:'¿Dónde se puede girar el minicargador?', en:'Where can the track loader turn?', o:[
+     {es:'Dentro de la fila, si voy despacio', en:'Inside the row, if I go slowly'},
+     {es:'Donde haya más espacio entre paneles', en:'Wherever there is more room between panels'},
+     {es:'Solo en pasillos de manejo o cabeceras', en:'Only in drive aisles or headlands'}], a:2,
+     wEs:'Girar dentro de la fila mueve la cola hacia los paneles. Así ocurrió en un incidente real.', wEn:'Turning in the row swings the tail into the panels. That is what happened in a real incident.'}},
+  {k:'aer', es:'Aireadora', en:'Aerator',
+   steps:[
+    {bEs:'Planear el área', bEn:'Plan the area', es:'Marcar cables enterrados, cajas, pilotes de paneles y obstáculos. Confirmar con el responsable del sitio las zonas donde no se puede airear.', en:'Mark buried cables, boxes, panel piles and obstacles. Confirm with the site lead where aerating is not allowed.'},
+    {bEs:'Revisar', bEn:'Check', es:'Aceite de motor, combustible, presión de llantas, picos sin doblar ni rotos, protecciones en su lugar y controles de presencia del operador funcionando.', en:'Engine oil, fuel, tire pressure, tines not bent or broken, guards in place and operator presence controls working.'},
+    {bEs:'Arrancar', bEn:'Start', es:'De pie en la plataforma, freno de estacionamiento puesto y picos arriba.', en:'Standing on the platform, parking brake on, tines up.'},
+    {bEs:'Operar', bEn:'Operate', es:'Ambas manos en los controles y velocidad baja cerca de paneles. Bajar los picos solo en el área a airear.', en:'Both hands on the controls, low speed near panels. Lower the tines only over the area to aerate.'},
+    {bEs:'Girar y cruzar', bEn:'Turn and cross', es:'Levantar los picos antes de girar, retroceder o cruzar caminos y superficies duras.', en:'Raise the tines before turning, backing up or crossing roads and hard surfaces.'},
+    {bEs:'Pendientes', bEn:'Slopes', es:'Seguir el manual. Evitar pendientes pronunciadas, bordes de zanjas y suelo suelto.', en:'Follow the manual. Avoid steep slopes, trench edges and loose ground.'},
+    {bEs:'Al bajarte', bEn:'Getting off', es:'Picos arriba, freno de estacionamiento, motor apagado y llave fuera. Nunca anular los controles de presencia.', en:'Tines up, parking brake, engine off, key out. Never bypass the presence controls.'}
+   ],
+   ruleEs:'Si no sé qué hay debajo, no bajo los picos.', ruleEn:"If I don't know what's underneath, the tines stay up.",
+   expEs:'¿Dónde pasan los cables enterrados en su bloque? ¿Cómo los vamos a marcar?', expEn:'Where do the buried cables run in your block? How will we mark them?',
+   q:{es:'Llegas al final de la pasada y tienes que girar. ¿Qué haces?', en:'You reach the end of a pass and need to turn. What do you do?', o:[
+     {es:'Giro despacio con los picos abajo', en:'Turn slowly with the tines down'},
+     {es:'Levanto los picos, giro y los vuelvo a bajar', en:'Raise the tines, turn, then lower them again'},
+     {es:'Giro rápido para no perder tiempo', en:'Turn quickly to save time'}], a:1,
+     wEs:'Girar con los picos abajo arranca el suelo, dobla los picos y puede enganchar un cable.', wEn:'Turning with tines down tears the ground, bends the tines and can snag a cable.'}},
+  {k:'veh', es:'Vehículos', en:'Vehicles',
+   steps:[
+    {bEs:'Área de equipo', bEn:'Equipment area', es:'Estacionar solo en el punto designado, cerrando el acotamiento, fuera del camino y lejos de paneles.', en:'Park only at the designated spot, shoulder closed, off the road and away from panels.'},
+    {bEs:'Antes de entrar a una fila', bEn:'Before entering a row', es:'Revisar en el mapa y a pie: paso libre, espacio para salir y paneles caídos o en el suelo.', en:'Check on the map and on foot: clear path, room to exit, and fallen or grounded panels.'},
+    {bEs:'Dar la vuelta o retroceder', bEn:'Turn around or back up', es:'Solo con vigía. Sin vigía: bajarse y revisar físicamente antes de moverse.', en:'Only with a spotter. No spotter: get out and physically check before moving.'},
+    {bEs:'Velocidad', bEn:'Speed', es:'Paso de persona dentro de las filas. Nunca sobre o bajo paneles ni cables.', en:'Walking pace in rows. Never over or under panels or cables.'},
+    {bEs:'Sin espacio', bEn:'No room', es:'Salir en reversa guiado por el mismo camino o terminar a pie.', en:'Back out the same way with a guide, or finish on foot.'}
+   ],
+   ruleEs:'Si no veo, me bajo y reviso.', ruleEn:"If I can't see, I get out and look.",
+   expEs:'¿En qué filas del sitio es más difícil dar la vuelta? Márquenlas en el mapa.', expEn:'Which rows on site are hardest to turn around in? Mark them on the map.',
+   q:{es:'Tienes que dar la vuelta en una fila y no hay vigía. ¿Qué haces?', en:'You need to turn around in a row and there is no spotter. What do you do?', o:[
+     {es:'Maniobro despacio usando los espejos', en:'Maneuver slowly using the mirrors'},
+     {es:'Me bajo, reviso el espacio a pie o espero al vigía', en:'Get out, check the space on foot, or wait for a spotter'},
+     {es:'Doy la vuelta rápido para no estorbar', en:'Turn quickly so I am not in the way'}], a:1,
+     wEs:'Los espejos no muestran un panel en el suelo. Bajarse toma un minuto; un panel, semanas.', wEn:'Mirrors don’t show a panel on the ground. Getting out takes a minute; a panel takes weeks.'}}
+];
+
+const MAINT = {
+  cut: [
+    {wEs:'Antes de cada uso', wEn:'Before each use', items:[
+      ['Cuchilla, tuerca, copa y arandela sin daño y apretadas', 'Blade, nut, cup and washer undamaged and tight'],
+      ['Protector de cuchilla firme y sin grietas', 'Blade guard secure and not cracked'],
+      ['Tornillos del manubrio y arnés en buen estado', 'Handlebar bolts and harness in good shape'],
+      ['Filtro de aire limpio', 'Air filter clean'],
+      ['Sin fugas de combustible; el interruptor de paro apaga el motor', 'No fuel leaks; the stop switch shuts off the engine']]},
+    {wEs:'Al terminar el día', wEn:'End of the day', items:[
+      ['Limpiar savia y residuos de la cuchilla, el protector y las aletas del motor (motor apagado y frío)', 'Clean sap and debris off the blade, guard and engine fins (engine off and cool)'],
+      ['Revisar los dientes: afilar o cambiar la cuchilla según el manual', 'Check the teeth: sharpen or replace the blade per the manual'],
+      ['Guardar con la cubierta de cuchilla puesta, en lugar seco', 'Store with the blade cover on, in a dry place'],
+      ['Combustible en recipiente aprobado, lejos de la comida y las baterías', 'Fuel in an approved can, away from food and batteries']]},
+    {wEs:'Periódico, según el manual', wEn:'Periodic, per the manual', items:[
+      ['Engrasar la caja de engranes del cabezal', 'Grease the gearhead'],
+      ['Limpiar o cambiar el filtro de aire y revisar la bujía', 'Clean or replace the air filter and check the spark plug'],
+      ['Limpiar el mofle y la malla antichispas', 'Clean the muffler and spark arrestor screen'],
+      ['Vaciar la mezcla si no se usará por semanas: se echa a perder', 'Drain the mix if unused for weeks: it goes stale']]}
+  ],
+  aer: [
+    {wEs:'Antes de cada uso', wEn:'Before each use', items:[
+      ['Nivel de aceite de motor y combustible', 'Engine oil level and fuel'],
+      ['Filtro de aire limpio', 'Air filter clean'],
+      ['Presión de llantas pareja', 'Even tire pressure'],
+      ['Picos y sus sujetadores sin daño ni piezas sueltas', 'Tines and fasteners undamaged and tight'],
+      ['Sin fugas; protecciones y calcomanías de seguridad en su lugar', 'No leaks; guards and safety decals in place']]},
+    {wEs:'Al terminar el día', wEn:'End of the day', items:[
+      ['Motor apagado, frío y llave fuera antes de limpiar', 'Engine off, cool and key out before cleaning'],
+      ['Quitar tierra y núcleos de los picos y del chasis', 'Remove soil and cores from tines and frame'],
+      ['Revisar desgaste de los picos', 'Check tine wear'],
+      ['Estacionar en terreno plano con freno puesto', 'Park on level ground with the brake on']]},
+    {wEs:'Periódico, según el manual', wEn:'Periodic, per the manual', items:[
+      ['Cambio de aceite y filtro', 'Oil and filter change'],
+      ['Engrasar los puntos de engrase', 'Grease the grease points'],
+      ['Revisar bandas, cadena y tensión', 'Check belts, chain and tension'],
+      ['Cambiar los picos al llegar al desgaste del manual; revisar la batería', 'Replace tines at the wear limit in the manual; check the battery']]}
+  ]
+};
+const RETURN = [
+  {k:'weather', code:{es:'CLIMA', en:'WX'}, es:'Revisar el clima', en:'Check the weather', cEs:'Si va a llover, tapar y asegurar todo el equipo antes de que llegue el agua.', cEn:'If rain is coming, cover and secure all gear before it arrives.'},
+  {k:'tools', code:{es:'HERR', en:'TOOLS'}, es:'Herramientas de trabajo', en:'Work tools', cEs:'Apagadas, frías, con funda o protector, y aseguradas en la camioneta.', cEn:'Off, cool, sheathed or guarded, and secured in the truck.'},
+  {k:'saws', code:{es:'MAQ', en:'SAWS'}, es:'Máquinas de corte', en:'Cutting machines', cEs:'Motor apagado y frío, cubierta de cuchilla puesta, amarradas para el viaje.', cEn:'Engine off and cool, blade cover on, tied down for the drive.'},
+  {k:'herb', code:{es:'HERB', en:'HERB'}, es:'Material de herbicida', en:'Herbicide supplies', cEs:'Envases cerrados; los vacíos con triple enjuague; separados de comida y agua.', cEn:'Containers closed; empties triple-rinsed; kept apart from food and water.'},
+  {k:'batt', code:{es:'BAT', en:'BATT'}, es:'Baterías', en:'Batteries', cEs:'En un lugar seguro, seco y fresco; protegidas de la lluvia y del sol.', cEn:'In a safe, dry, cool place; protected from rain and sun.'},
+  {k:'tech', code:{es:'TEC', en:'TECH'}, es:'Equipo tecnológico', en:'Tech equipment', cEs:'Starlink, cámaras, cables y conexiones en sus estuches y secos.', cEn:'Starlink, cameras, cables and connections in their cases and dry.'},
+  {k:'trash', code:{es:'BASURA', en:'TRASH'}, es:'Basura y envases', en:'Trash and containers', cEs:'Recoger toda la basura, envases vacíos y residuos. Nada se queda en el sitio.', cEn:'Pick up all trash, empty containers and waste. Nothing stays on site.'},
+  {k:'cones', code:{es:'CONO', en:'CONE'}, es:'Barreras, conos y cinta', en:'Barriers, cones and tape', cEs:'Recogidos, salvo la cinta que marca un panel dañado.', cEn:'Picked up, except tape marking a damaged panel.'},
+  {k:'tag', code:{es:'ETIQ', en:'TAG'}, es:'Revisar con la lista de colores', en:'Check against the color list', cEs:'Cada equipo revisa su color y código: regresa todo.', cEn:'Each team checks its color and code: return everything.'}
+];
+const DURING = [
+  {es:'EPP completo puesto toda la jornada; no me lo quito por el calor', en:'Full PPE on all day; I don’t take it off because of heat'},
+  {es:'Lentes, guantes y protección auditiva al operar cualquier máquina', en:'Glasses, gloves and hearing protection whenever operating a machine'},
+  {es:'Casco con ala para sombra y protector solar reaplicado', en:'Hard hat with sun brim and sunscreen reapplied'},
+  {es:'Vigía en su puesto en cada maniobra cerca de paneles', en:'Spotter in place for every maneuver near panels'},
+  {es:'Revisé a mi compañero: toma agua y se ve bien', en:'I checked my partner: drinking water and looking fine'},
+  {es:'Pausa en la sombra cuando el calor sube', en:'Shade break when the heat rises'}
+];
+const LEAVE = [
+  {auto:'ret', es:'Todo el equipo de regreso y asegurado', en:'All gear back and secured'},
+  {es:'Herramientas limpias; fallas etiquetadas "NO USAR" y reportadas', en:'Tools cleaned; faults tagged "DO NOT USE" and reported'},
+  {es:'Recorrido final junto a paneles, cables y postes: sin golpes, vidrio roto ni manchas', en:'Final walk along panels, cables and poles: no impacts, broken glass or stains'},
+  {es:'Ramas y troncos fuera de los pasillos y lejos de los equipos', en:'Branches and trunks out of aisles and away from equipment'},
+  {es:'Sobrante de mezcla manejado según la etiqueta; nunca al suelo ni a drenajes', en:'Leftover mix handled per label; never on the ground or in drains'},
+  {es:'EPP de químicos lavado o desechado; manos y cara lavadas antes de comer', en:'Chemical PPE washed or discarded; hands and face washed before eating'},
+  {es:'Ropa de trabajo separada de la ropa personal', en:'Work clothes kept apart from personal clothes'},
+  {es:'Registro del día: área, producto, cantidad, clima, incidentes y casi-incidentes', en:'Daily log: area, product, amount, weather, incidents and near misses'},
+  {es:'Conteo de personal: todos presentes y sin lesiones', en:'Headcount: everyone present and uninjured'}
+];
+
+const ALTO = [
+  {bEs:'Detener', bEn:'Stop', es:'Gritar "¡ALTO!", apagar herramientas y activar frenos.', en:'Shout "STOP!", shut off tools, set brakes.'},
+  {bEs:'Asegurar', bEn:'Secure', es:'Sin peligro para quien ayuda: vidrio, cables, combustible, químico.', en:'No danger to the helper: glass, cables, fuel, chemical.'},
+  {bEs:'Atender', bEn:'Care', es:'Primeros auxilios. Si es grave, llamar al 911.', en:'First aid. If serious, call 911.'},
+  {bEs:'Avisar', bEn:'Notify', es:'Al supervisor de inmediato, por teléfono o radio.', en:'The supervisor, right away, by phone or radio.'},
+  {bEs:'Conservar', bEn:'Preserve', es:'No mover nada salvo para salvar una vida. Tomar fotos.', en:'Move nothing except to save a life. Take photos.'},
+  {bEs:'Reportar', bEn:'Report', es:'Verbal en el turno; escrito en 24 horas, con testigos.', en:'Verbal the same shift; written within 24 hours, with witnesses.'}
+];
+const TYPES = [
+  {es:'Corte o golpe', en:'Cut or impact', yEs:'Presión directa con gasa limpia; elevar la extremidad; 911 si es grave.', yEn:'Direct pressure with clean gauze; raise the limb; 911 if serious.', nEs:'No retirar objetos clavados.', nEn:'Do not remove embedded objects.'},
+  {es:'Herbicida en los ojos', en:'Herbicide in the eyes', yEs:'Enjuagar con agua limpia 15 a 20 minutos; seguir los primeros auxilios de la etiqueta.', yEn:'Rinse with clean water 15 to 20 minutes; follow the label first aid.', nEs:'No frotar los ojos.', nEn:'Do not rub the eyes.'},
+  {es:'Herbicida en la piel o ropa', en:'Herbicide on skin or clothes', yEs:'Quitar la ropa contaminada; lavar con agua y jabón 15 a 20 minutos.', yEn:'Remove contaminated clothing; wash with soap and water 15 to 20 minutes.', nEs:'No usar solventes ni diésel en la piel.', nEn:'Do not use solvents or diesel on skin.'},
+  {es:'Herbicida tragado o inhalado', en:'Herbicide swallowed or inhaled', yEs:'Aire fresco; llamar a Control de Envenenamientos o al 911 con la etiqueta en mano.', yEn:'Fresh air; call Poison Control or 911 with the label in hand.', nEs:'No provocar el vómito salvo que lo indique la etiqueta o el médico.', nEn:'Do not induce vomiting unless the label or a doctor says so.'},
+  {es:'Mordedura de serpiente', en:'Snakebite', yEs:'Llamar al 911; mantener a la persona quieta y calmada, sentada o acostada con la mordida por debajo del corazón; quitar anillos y reloj; anotar la hora.', yEn:'Call 911; keep the person still and calm, sitting or lying with the bite below the heart; remove rings and watch; note the time.', nEs:'No hacer torniquete, no cortar ni chupar la herida, no poner hielo, no intentar atrapar ni matar la serpiente.', nEn:'No tourniquet, no cutting or sucking the wound, no ice, do not try to catch or kill the snake.'},
+  {es:'Golpe de calor', en:'Heat illness', yEs:'Sombra, enfriar con agua, líquidos si está consciente; 911 si hay confusión.', yEn:'Shade, cool with water, fluids if conscious; 911 if confused.', nEs:'No dejar sola a la persona.', nEn:'Do not leave the person alone.'},
+  {es:'Panel o cable dañado', en:'Damaged panel or cable', yEs:'Alejarse; tratarlo como energizado; acordonar; avisar al supervisor y al responsable eléctrico.', yEn:'Move away; treat as energized; tape off; notify the supervisor and electrical lead.', nEs:'No tocar el panel, el vidrio ni los cables.', nEn:'Do not touch the panel, glass or cables.'},
+  {es:'Derrame de herbicida o combustible', en:'Herbicide or fuel spill', yEs:'Contener con el kit; alejar de drenajes y agua; avisar al supervisor.', yEn:'Contain with the kit; keep away from drains and water; notify the supervisor.', nEs:'No lavarlo con agua hacia el suelo o drenajes.', nEn:'Do not hose it into the ground or drains.'}
+];
+const NEW = [
+  {wEs:'De inmediato', wEn:'Immediately', es:'Paro de trabajo (stand-down). En un incidente real, cubrió todo el trabajo en el sitio.', en:'Stop-work (stand-down). In a real incident, it covered all work at the site.'},
+  {wEs:'Mismo día', wEn:'Same day', es:'Cuadrilla y equipo fuera de los arrays. Declaración escrita (original en español con su traducción) y reconstrucción.', en:'Crew and equipment out of the arrays. Written statement (Spanish original with translation) and reconstruction.'},
+  {wEs:'En 48 horas', wEn:'Within 48 hours', es:'Investigación con los 5 porqués: causa raíz y factores que contribuyeron. ¿Qué control faltó o falló?', en:'Investigation with the 5 Whys: root cause and contributing factors. Which control was missing or failed?'},
+  {wEs:'Después', wEn:'Then', es:'Plan de acción correctiva: cada acción con responsable y marcada si es requisito para reiniciar.', en:'Corrective action plan: each action with an owner, marked if required before restart.'},
+  {wEs:'Antes de volver', wEn:'Before returning', es:'Reentrenamiento del operador con firma de capacitación documentada.', en:'Operator retraining with documented training sign-off.'},
+  {wEs:'Para reiniciar', wEn:'To restart', es:'Reporte final enviado al correo de incidentes del cliente; acciones correctivas implementadas y explicadas a la cuadrilla con hoja de firmas; aprobación escrita del cliente. El supervisor del sitio levanta el paro.', en:'Final report sent to the client incident email; corrective actions in place and briefed to the crew with a sign-in sheet; written approval from the client. The site supervisor releases the stand-down.'},
+  {wEs:'Al cerrar', wEn:'At close', es:'Lección aprendida con todas las cuadrillas, sin culpables. Actualizar el módulo y emitir nueva versión.', en:'Lesson learned with all crews, no blame. Update the module and issue a new version.'},
+  {wEs:'A 30 días', wEn:'At 30 days', es:'Observación en campo: ¿las acciones correctivas se aplican y funcionan?', en:'Field observation: are the corrective actions applied and working?'}
+];
+const CONTACT = [
+  {bEs:'Detener', bEn:'Stop', es:'Alto total y motor apagado. No mover la máquina salvo peligro inmediato.', en:'Full stop, engine off. Do not move the machine unless there is immediate danger.'},
+  {bEs:'Marcar el módulo', bEn:'Flag the module', es:'Acordonar con cinta o bandera. Tratarlo como energizado y no tocarlo.', en:'Tape or flag it off. Treat it as energized and do not touch it.'},
+  {bEs:'Leer la etiqueta del pilote', bEn:'Read the pile tag', es:'Anotar PCS, LBD y fila tal como aparecen en la etiqueta. No de memoria.', en:'Write down PCS, LBD and row exactly as on the tag. Not from memory.'},
+  {bEs:'Pin GPS y fotos', bEn:'GPS pin and photos', es:'Pin en el punto exacto de contacto. Fotos del módulo, la etiqueta y la máquina.', en:'Pin at the exact contact point. Photos of the module, the tag and the machine.'},
+  {bEs:'Llamar al supervisor', bEn:'Call the supervisor', es:'Supervisor del sitio, de inmediato.', en:'Site supervisor, right away.'},
+  {bEs:'Avisar a O&M', bEn:'Notify O&M', es:'O&M, con la ubicación verificada.', en:'O&M, with the verified location.'},
+  {bEs:'Reporte escrito', bEn:'Written report', es:'Solo después de verificar la ubicación. Enviar a toda la lista de notificación.', en:'Only after the location is verified. Send to the full notification list.'}
+];
+
+const QUIZ = [
+  {es:'El mezquite está inclinado hacia un panel y no hay otra dirección de caída.', en:'The mesquite leans toward a panel and there is no other felling direction.', o:[
+    {es:'Detengo, aviso al supervisor y corto por secciones con cuerda', en:'Stop, tell the supervisor, and cut in sections with a rope'},
+    {es:'Corto el tronco desde la base rápido', en:'Cut the trunk at the base quickly'},
+    {es:'Lo dejo para el final del día', en:'Leave it for the end of the day'}], a:0,
+   wEs:'Cuando la caída natural apunta al panel, se planea con el supervisor y se baja por partes.', wEn:'When the natural fall points at the panel, plan with the supervisor and take it down in parts.'},
+  {es:'Vas con el minicargador dentro de una fila y necesitas regresar.', en:'You are in a row with the track loader and need to go back.', o:[
+    {es:'Giro sobre mi eje, despacio', en:'Pivot in place, slowly'},
+    {es:'Sigo recto hasta el pasillo y giro ahí', en:'Go straight to the aisle and turn there'},
+    {es:'Giro alejándome del panel más cercano', en:'Turn away from the nearest panel'}], a:1,
+   wEs:'Al girar, la cola barre hacia el lado contrario: alejarte de un panel empuja la parte trasera hacia otro. Así pasó en un incidente real.', wEn:'When turning, the tail sweeps the opposite way: turning away from one panel pushes the rear into another. That is what happened in a real incident.'},
+  {es:'Estás aplicando herbicida y el viento cambia hacia la fila de paneles.', en:'You are applying herbicide and the wind shifts toward the panel row.', o:[
+    {es:'Subo la presión para terminar antes', en:'Raise the pressure to finish sooner'},
+    {es:'Detengo la aplicación', en:'Stop applying'},
+    {es:'Aplico más cerca del suelo y sigo', en:'Apply closer to the ground and keep going'}], a:1,
+   wEs:'Viento hacia equipos o personas = detener. Más presión crea gotas más finas que viajan más.', wEn:'Wind toward equipment or people = stop. More pressure makes finer droplets that travel farther.'},
+  {es:'A tu compañero le cae herbicida en los ojos.', en:'Herbicide splashes into your partner’s eyes.', o:[
+    {es:'Le limpio los ojos con un trapo', en:'Wipe the eyes with a rag'},
+    {es:'Esperamos a terminar la fila', en:'We wait to finish the row'},
+    {es:'Enjuague con agua limpia 15 a 20 minutos y sigo la etiqueta', en:'Rinse with clean water 15 to 20 minutes and follow the label'}], a:2,
+   wEs:'Agua limpia de inmediato y la etiqueta en mano; frotar empeora la lesión.', wEn:'Clean water right away and the label in hand; rubbing makes it worse.'},
+  {es:'Antes de entrar a una fila ves paneles en el suelo.', en:'Before entering a row you see panels on the ground.', o:[
+    {es:'Paso con cuidado por un lado', en:'Pass carefully along the side'},
+    {es:'Me detengo, busco otra ruta y lo reporto como casi-incidente', en:'Stop, find another route and report it as a near miss'},
+    {es:'Muevo los paneles yo mismo', en:'Move the panels myself'}], a:1,
+   wEs:'Eso es un casi-incidente: se corrige y se reporta en el mismo turno.', wEn:'That is a near miss: correct it and report it the same shift.'},
+  {es:'Un panel quedó quebrado, con vidrio y cables expuestos.', en:'A panel is broken, with glass and cables exposed.', o:[
+    {es:'Me alejo, lo trato como energizado, acordono y aviso', en:'Move away, treat it as energized, tape off and notify'},
+    {es:'Recojo el vidrio para que nadie se corte', en:'Pick up the glass so no one gets cut'},
+    {es:'Lo cubro con una lona y sigo', en:'Cover it with a tarp and keep going'}], a:0,
+   wEs:'Un panel dañado puede seguir generando electricidad. Solo personal eléctrico lo toca.', wEn:'A damaged panel can still generate power. Only electrical staff touch it.'},
+  {es:'La máquina tocó un panel. ¿Qué ubicación reportas?', en:'The machine touched a panel. What location do you report?', o:[
+    {es:'El bloque PCS que recuerdo', en:'The PCS block I remember'},
+    {es:'La etiqueta del pilote (PCS, LBD, fila) y un pin GPS en el punto exacto', en:'The pile tag (PCS, LBD, row) and a GPS pin at the exact spot'},
+    {es:'Lo que me diga un compañero', en:'Whatever a coworker tells me'}], a:1,
+   wEs:'En un incidente real, la ubicación se reportó mal dos veces y O&M tardó unas 5.5 horas en encontrar el panel.', wEn:'In a real incident, the location was reported wrong twice and O&M took about 5.5 hours to find the panel.'},
+  {es:'¿Cuándo se puede preparar la mezcla de herbicida?', en:'When can the herbicide mix be prepared?', o:[
+    {es:'A ojo, si ya tengo experiencia', en:'By eye, if I am experienced'},
+    {es:'Con la etiqueta leída, en el área designada y con EPP', en:'With the label read, in the designated area and with PPE'},
+    {es:'Junto a la fila, para ahorrar tiempo', en:'Next to the row, to save time'}], a:1,
+   wEs:'Sin etiqueta leída, no hay mezcla.', wEn:'No label read, no mix.'},
+  {es:'Ocurre un segundo accidente en la cuadrilla.', en:'A second accident happens in the crew.', o:[
+    {es:'Paramos la actividad, investigamos en 48 horas y hacemos un plan correctivo', en:'Stop the task, investigate within 48 hours and make a corrective plan'},
+    {es:'Se sanciona a quien lo causó y seguimos', en:'Discipline whoever caused it and continue'},
+    {es:'Lo reportamos al final de la semana', en:'Report it at the end of the week'}], a:0,
+   wEs:'Un segundo accidente indica que un control falló. Se corrige el sistema, no solo a la persona.', wEn:'A second accident means a control failed. Fix the system, not only the person.'}
+];
+
+const GLOSS = [
+  {en:'PPE', es:'EPP', dEs:'Equipo de protección personal.', dEn:'Personal protective equipment.'},
+  {en:'Spotter', es:'Vigía', dEs:'Persona que vigila la zona y puede detener el trabajo.', dEn:'Person who watches the zone and can stop work.'},
+  {en:'Kickback', es:'Rebote', dEs:'Salto brusco de la motosierra hacia el operador al tocar con la punta.', dEn:'Sudden jump of the saw toward the operator when the tip touches.'},
+  {en:'Exclusion zone', es:'Zona de exclusión', dEs:'Área donde nadie ni nada frágil puede estar mientras se corta.', dEn:'Area where no people or fragile equipment may be during cutting.'},
+  {en:'Cut stump', es:'Tratamiento de tocón', dEs:'Herbicida aplicado al anillo exterior del corte.', dEn:'Herbicide applied to the outer ring of the cut.'},
+  {en:'Basal bark', es:'Tratamiento basal', dEs:'Herbicida aplicado a la corteza de la base del tallo.', dEn:'Herbicide applied to the bark at the base of the stem.'},
+  {en:'Snake gaiters', es:'Polainas contra serpientes', dEs:'Protección de tobillo a rodilla contra mordeduras.', dEn:'Ankle-to-knee protection against bites.'},
+  {en:'Drift', es:'Deriva', dEs:'Rocío que el viento lleva fuera del objetivo.', dEn:'Spray carried off target by wind.'},
+  {en:'SDS', es:'Hoja de seguridad', dEs:'Documento con riesgos y primeros auxilios del producto.', dEn:'Document with the product’s hazards and first aid.'},
+  {en:'REI', es:'Intervalo de reingreso', dEs:'Tiempo antes de volver a entrar sin EPP a un área tratada.', dEn:'Time before re-entering a treated area without PPE.'},
+  {en:'Near miss', es:'Casi-incidente', dEs:'Algo que pudo causar daño y no lo causó. Se reporta.', dEn:'Something that could have caused harm and didn’t. It is reported.'},
+  {en:'PCS block', es:'Bloque PCS', dEs:'Sección del sitio solar identificada en el mapa (ej. PCS01234).', dEn:'Section of the solar site identified on the map (e.g. PCS01234).'},
+  {en:'Shoulder closure', es:'Cierre de acotamiento', dEs:'Delimitar el borde del camino para estacionar equipo sin ocupar la vía.', dEn:'Marking off the road edge to park equipment without blocking the road.'}
+];
+
+/* State */
+const KEY = 'mezquite-seguro-v2';
+let S = {lang:'es', size:false, contrast:false, task:'saw', tool:'saw', start:{}, leave:{}, qc:{}, quiz:{}, visited:{}, name:'', sign:{}, signDraft:{}, game:{task:'saw', start:0, end:0, placed:{}, pending:null, last:null}, ppeLog:{}, best:{}, packs:{}, packLog:{}, crew:{names:'', mode:'day'}, rep:{}, day:null, during:{}, formsDay:''};
+try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) S = Object.assign(S, saved); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const L = o => o[S.lang];
+const F = (o, base) => o[base + (S.lang === 'es' ? 'Es' : 'En')];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const icon = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${ICON[k]}</svg>`;
+const ids = T.nav.map(n => n.id);
+let current = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'inicio';
+
+/* Example scenes (illustrations drawn in SVG) */
+function panelRow(y, h, x0, x1, n, crack) {
+  const w = (x1 - x0) / n, sk = h * 0.45;
+  let o = '';
+  for (let i = 0; i < n; i++) {
+    const x = x0 + i * w;
+    o += `<line x1="${x + w / 2}" y1="${y + h}" x2="${x + w / 2}" y2="${y + h * 1.5}" stroke="var(--panel-line)" stroke-width="2"/>`;
+    o += `<polygon points="${x + sk},${y} ${x + w - 3},${y} ${x + w - 3 - sk},${y + h} ${x},${y + h}" fill="var(--panel)" stroke="var(--panel-line)" stroke-width="1.5"/>`;
+    o += `<line x1="${x + sk / 2}" y1="${y + h / 2}" x2="${x + w - 3 - sk / 2}" y2="${y + h / 2}" stroke="var(--panel-line)" stroke-width="1"/>`;
+    o += `<line x1="${x + w / 2 + sk / 2 - 1}" y1="${y}" x2="${x + w / 2 - sk / 2 - 1}" y2="${y + h}" stroke="var(--panel-line)" stroke-width="1"/>`;
+    if (crack && i === 0) o += `<path d="M${x + 30} ${y + 4} l9 10 -7 6 12 12 M${x + 39} ${y + 14} l14 -4 M${x + 44} ${y + 20} l10 8" stroke="#FFFFFF" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+  }
+  return o;
+}
+function person(x, y, tool, target) {
+  let o = `<g stroke-linecap="round">`;
+  o += `<line x1="${x - 6}" y1="${y}" x2="${x - 3}" y2="${y - 30}" stroke="var(--ink)" stroke-width="6"/><line x1="${x + 6}" y1="${y}" x2="${x + 3}" y2="${y - 30}" stroke="var(--ink)" stroke-width="6"/>`;
+  o += `<rect x="${x - 11}" y="${y - 64}" width="22" height="36" rx="5" fill="var(--orange)"/><line x1="${x - 11}" y1="${y - 46}" x2="${x + 11}" y2="${y - 46}" stroke="#F3F5F1" stroke-width="3"/>`;
+  o += `<circle cx="${x}" cy="${y - 74}" r="8" fill="var(--skin)"/><path d="M${x - 11} ${y - 75} a11 11 0 0 1 22 0 z" fill="var(--hat)"/><rect x="${x - 3}" y="${y - 76}" width="12" height="5" rx="1" fill="var(--ink)" opacity=".75"/>`;
+  if (tool === 'cut') o += `<line x1="${x + 8}" y1="${y - 50}" x2="${x + 58}" y2="${y - 4}" stroke="var(--ink)" stroke-width="4"/><circle cx="${x + 60}" cy="${y - 3}" r="8" fill="none" stroke="var(--ink)" stroke-width="3"/>`;
+  if (tool === 'saw') o += `<line x1="${x + 8}" y1="${y - 50}" x2="${x + 22}" y2="${y - 44}" stroke="var(--ink)" stroke-width="4"/><rect x="${x + 18}" y="${y - 52}" width="18" height="14" rx="3" fill="var(--orange)"/><rect x="${x + 34}" y="${y - 48}" width="30" height="6" rx="3" fill="#8A969C"/>`;
+  if (tool === 'spray') o += `<rect x="${x - 19}" y="${y - 64}" width="9" height="26" rx="3" fill="var(--solar)"/><line x1="${x + 8}" y1="${y - 48}" x2="${target}" y2="${y - 22}" stroke="var(--ink)" stroke-width="3"/><circle cx="${target + 4}" cy="${y - 18}" r="2" fill="var(--orange)"/><circle cx="${target + 8}" cy="${y - 14}" r="2" fill="var(--orange)"/>`;
+  if (tool === 'wave') o += `<line x1="${x + 9}" y1="${y - 60}" x2="${x + 22}" y2="${y - 92}" stroke="var(--ink)" stroke-width="5"/><line x1="${x - 9}" y1="${y - 58}" x2="${x - 18}" y2="${y - 34}" stroke="var(--ink)" stroke-width="5"/>`;
+  return o + '</g>';
+}
+function sceneSVG(c) {
+  const es = S.lang === 'es';
+  let s = `<svg class="scene" viewBox="0 0 640 360" role="img" aria-label="${esc(c.alt ? L(c.alt) : '')}">`;
+  s += `<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--orange)"/></marker></defs>`;
+  s += `<rect width="640" height="360" fill="var(--sky)"/><circle cx="580" cy="56" r="26" fill="var(--sun)"/>`;
+  s += `<rect y="186" width="640" height="174" fill="var(--soil)"/>`;
+  s += panelRow(192, 14, 330, 640, 9) + panelRow(222, 22, 318, 640, 6) + panelRow(270, 36, 300, 640, 4, c.crack);
+  if (c.zone) s += `<ellipse class="zone" cx="110" cy="312" rx="232" ry="62" fill="var(--orange)" fill-opacity=".08" stroke="var(--orange)" stroke-width="3" stroke-dasharray="14 10"/><text x="24" y="270" font-family="IBM Plex Mono, monospace" font-size="15" fill="var(--ink)">${es ? 'Zona de exclusión' : 'Exclusion zone'} · 15 m / 50 ft</text>`;
+  if (c.barrier) s += `<rect x="284" y="258" width="12" height="70" fill="#C9A66B" stroke="var(--trunk)" stroke-width="2"/><text x="252" y="252" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--ink)">${es ? 'barrera' : 'barrier'}</text>`;
+  if (c.tree) s += `<path d="M168 300 C162 268 176 246 160 214 M174 300 C180 262 170 242 192 210 M170 260 C150 246 140 240 128 222" stroke="var(--trunk)" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <ellipse cx="146" cy="204" rx="40" ry="20" fill="var(--canopy)"/><ellipse cx="196" cy="198" rx="38" ry="20" fill="var(--canopy2)"/><ellipse cx="172" cy="182" rx="42" ry="22" fill="var(--canopy)"/><ellipse cx="124" cy="218" rx="22" ry="12" fill="var(--canopy2)"/><ellipse cx="216" cy="214" rx="24" ry="12" fill="var(--canopy)"/>`;
+  if (c.fall) s += `<path d="M150 170 C110 150 70 170 48 214" stroke="var(--orange)" stroke-width="4" fill="none" marker-end="url(#ah)"/><text x="20" y="150" font-family="IBM Plex Mono, monospace" font-size="15" fill="var(--ink)">${es ? 'caída: lejos del panel' : 'fall: away from panel'}</text>`;
+  if (c.stump) s += `<rect x="170" y="300" width="44" height="16" fill="var(--trunk)"/><ellipse cx="192" cy="300" rx="22" ry="7" fill="#C9A66B"/><ellipse cx="192" cy="300" rx="20" ry="6" fill="none" stroke="var(--orange)" stroke-width="3"/><text x="150" y="342" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--ink)">${es ? 'anillo exterior' : 'outer ring'}</text>`;
+  if (c.truck) s += `<rect x="96" y="276" width="96" height="32" rx="3" fill="var(--solar)"/><rect x="190" y="262" width="50" height="46" rx="7" fill="var(--solar)"/><rect x="200" y="269" width="30" height="17" rx="2" fill="var(--sky)"/><circle cx="124" cy="312" r="12" fill="var(--ink)"/><circle cx="214" cy="312" r="12" fill="var(--ink)"/><path d="M90 296 H40" stroke="var(--orange)" stroke-width="4" marker-end="url(#ah)"/><text x="24" y="270" font-family="IBM Plex Mono, monospace" font-size="14" fill="var(--ink)">${es ? 'reversa solo con vigía' : 'reverse only with a spotter'}</text>`;
+  if (c.tape) s += `<line x1="276" y1="336" x2="452" y2="336" stroke="var(--orange)" stroke-width="6" stroke-dasharray="14 14"/><line x1="290" y1="336" x2="452" y2="336" stroke="var(--ink)" stroke-width="6" stroke-dasharray="14 14" stroke-dashoffset="0" transform="translate(14 0)"/><text x="300" y="262" font-family="IBM Plex Mono, monospace" font-size="14" fill="var(--ink)">${es ? 'tratar como energizado' : 'treat as energized'}</text>`;
+  if (c.cable) s += `<path d="M0 346 H640" stroke="var(--bad)" stroke-width="3" stroke-dasharray="10 8"/><text x="330" y="338" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--ink)">${es ? 'cable enterrado: no airear encima' : 'buried cable: do not aerate over it'}</text>`;
+  if (c.aerator) s += `<g><rect x="92" y="306" width="30" height="8" rx="2" fill="var(--orange)"/><rect x="118" y="262" width="22" height="50" rx="3" fill="#E8ECEE" stroke="#5F6E77" stroke-width="1.5"/><rect x="136" y="276" width="104" height="34" rx="4" fill="#2B3338"/><rect x="160" y="252" width="44" height="26" rx="4" fill="#3A454C"/><rect x="122" y="250" width="14" height="6" rx="2" fill="#5F6E77"/><path d="M150 312v14M164 312v14M178 312v14M192 312v14M206 312v14" stroke="#8A969C" stroke-width="3" stroke-linecap="round"/><circle cx="132" cy="318" r="13" fill="#20282D"/><circle cx="132" cy="318" r="6" fill="var(--orange)"/><circle cx="228" cy="320" r="10" fill="#20282D"/><circle cx="228" cy="320" r="4" fill="var(--orange)"/></g>` + person(104, 306, 'none');
+  if (c.worker) s += person(c.wx || 96, c.wy || 330, c.worker, c.target || 176);
+  if (c.spotter) s += person(272, 340, 'wave');
+  return s + '</svg>';
+}
+const FIG = {
+  saw: {tree:1, fall:1, worker:'saw', wx:84, alt:{es:'Operador con motosierra y caída planeada lejos de los paneles', en:'Chainsaw operator with the fall planned away from the panels'}, cap:{es:'La dirección de caída se planea antes de arrancar, siempre lejos del panel.', en:'The felling direction is planned before starting, always away from the panel.'}},
+  cut: {zone:1, barrier:1, worker:'cut', alt:{es:'Desbrozadora con zona de exclusión y barrera frente al panel', en:'Brush cutter with exclusion zone and barrier in front of the panel'}, cap:{es:'Si el panel queda dentro de la zona de 15 m, va una barrera o se cambia de herramienta.', en:'If the panel is inside the 15 m zone, add a barrier or switch tools.'}},
+  hand: {tree:1, worker:'none', wx:110, alt:{es:'Trabajador con herramienta manual junto a un mezquite', en:'Worker with a hand tool next to a mesquite'}, cap:{es:'Sujetar la rama y cortar del lado opuesto al panel.', en:'Hold the branch and cut from the side opposite the panel.'}},
+  herb: {stump:1, worker:'spray', wx:110, target:180, alt:{es:'Aplicación de herbicida al anillo exterior de un tocón', en:'Herbicide applied to the outer ring of a stump'}, cap:{es:'El producto va al anillo exterior del tocón, con chorro dirigido y lejos de los paneles.', en:'Product goes on the stump’s outer ring, directed stream, away from the panels.'}},
+  aer: {aerator:1, cable:1, alt:{es:'Aireadora de operador de pie junto a una línea de cable enterrado', en:'Stand-on aerator next to a buried cable line'}, cap:{es:'Antes de bajar los picos: saber por dónde pasan los cables enterrados y marcarlos.', en:'Before lowering the tines: know where buried cables run and mark them.'}},
+  veh: {truck:1, spotter:1, alt:{es:'Camioneta retrocediendo guiada por un vigía', en:'Truck backing up guided by a spotter'}, cap:{es:'Sin vigía no hay maniobra: si no veo, me bajo y reviso.', en:'No spotter, no maneuver: if I can’t see, I get out and look.'}},
+  crash: {crack:1, tape:1, alt:{es:'Panel quebrado acordonado con cinta', en:'Broken panel taped off'}, cap:{es:'Un panel dañado se acordona y nadie lo toca hasta que llegue el responsable eléctrico.', en:'A damaged panel is taped off and no one touches it until the electrical lead arrives.'}}
+};
+function tailSVG() {
+  const es = S.lang === 'es';
+  const loader = (x, y, rot) => `<g transform="translate(${x} ${y}) rotate(${rot})"><rect x="-38" y="-24" width="76" height="8" rx="3" fill="#20282D"/><rect x="-38" y="16" width="76" height="8" rx="3" fill="#20282D"/><rect x="-34" y="-16" width="62" height="32" rx="4" fill="#E8ECEE" stroke="#20282D" stroke-width="1.5"/><rect x="-10" y="-11" width="20" height="22" rx="3" fill="#5F6E77"/><rect x="30" y="-24" width="13" height="48" rx="2" fill="var(--orange)"/></g>`;
+  let mods = '';
+  for (let x = 16; x < 520; x += 50) mods += `<rect x="${x}" y="46" width="46" height="40" rx="2" fill="var(--panel)" stroke="var(--panel-line)"/><rect x="${x}" y="214" width="46" height="40" rx="2" fill="var(--panel)" stroke="var(--panel-line)"/>`;
+  return `<svg class="scene" viewBox="0 0 640 310" role="img" aria-label="${es ? 'Vista desde arriba: giro dentro de la fila contra recto hasta el pasillo' : 'Top view: turning in the row versus straight to the aisle'}">
+    <defs><marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--good)"/></marker></defs>
+    <rect width="640" height="310" fill="var(--soil)"/><rect x="528" y="0" width="112" height="310" fill="var(--surface)" opacity=".45"/>
+    <text x="584" y="160" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink)" transform="rotate(-90 584 160)">${es ? 'pasillo / cabecera' : 'aisle / headland'}</text>
+    ${mods}
+    <text x="16" y="30" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink)">${es ? 'Paneles inclinados: el borde inferior puede quedar dentro de los 4 ft 7 in de la máquina' : 'Tilted panels: the lower edge can sit inside the machine’s 4 ft 7 in'}</text>
+    ${loader(170, 152, -28)}
+    <path d="M132 176 A70 70 0 0 1 112 92" stroke="var(--bad)" stroke-width="3" stroke-dasharray="7 6" fill="none"/>
+    <path d="M104 80l16 16M120 80l-16 16" stroke="var(--bad)" stroke-width="4" stroke-linecap="round"/>
+    ${loader(390, 150, 0)}
+    <path d="M440 150 H556" stroke="var(--good)" stroke-width="4" marker-end="url(#ag)"/>
+    <path d="M566 150 C606 150 612 196 600 236" stroke="var(--good)" stroke-width="4" fill="none" marker-end="url(#ag)"/>
+    <text x="16" y="290" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--bad)">${es ? '✗ Giro en la fila: la cola golpea el panel' : '✗ Turn in the row: the tail hits the panel'}</text>
+    <text x="330" y="290" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--good)">${es ? '✓ Recto hasta el pasillo y girar ahí' : '✓ Straight to the aisle, turn there'}</text>
+  </svg>`;
+}
+function figure(k) {
+  if (k === 'mtl') return `<figure class="fig">${tailSVG()}<figcaption><b>${S.lang === 'es' ? 'Imagen de ejemplo' : 'Example image'}</b>${S.lang === 'es' ? 'Al girar, la parte trasera barre hacia el lado contrario. Dentro de la fila no hay espacio para esa cola.' : 'When turning, the rear sweeps the opposite way. Inside a row there is no room for that tail.'}</figcaption></figure>`;
+  const f = FIG[k]; return `<figure class="fig">${sceneSVG(f)}<figcaption><b>${S.lang === 'es' ? 'Imagen de ejemplo' : 'Example image'}</b>${L(f.cap)}</figcaption></figure>`; }
+
+/* Intro video: animated scenes + narration + captions */
+const SCENES = [
+  {c:{tree:1}, title:1, es:'Bienvenidos a Mezquite Seguro, el entrenamiento para cortar mezquite y aplicar herbicida junto a paneles solares.', en:'Welcome to Mezquite Seguro, the training for cutting mesquite and applying herbicide next to solar panels.'},
+  {c:{tree:1, worker:'saw', wx:84}, es:'Ustedes ya saben cortar mezquite. Su experiencia es el punto de partida de este módulo.', en:'You already know how to cut mesquite. Your experience is the starting point of this module.'},
+  {c:{crack:1, tape:1}, es:'En un incidente real, un minicargador con desbrozadora giró dentro de una fila y su parte trasera rozó un panel. No hubo lesionados. No buscamos culpables: buscamos controles.', en:'In a real incident, a track loader with a brush cutter turned inside a row and its rear grazed a panel. No one was hurt. We are not looking for blame: we are looking for controls.'},
+  {c:{zone:1, barrier:1, worker:'cut'}, es:'Antes de cada corte: planear la caída, marcar la zona de exclusión y poner barrera si el panel queda cerca.', en:'Before every cut: plan the fall, mark the exclusion zone, and add a barrier if the panel is close.'},
+  {c:{stump:1, worker:'spray', wx:110, target:180}, es:'Con herbicida: sin etiqueta leída, no hay mezcla. Se aplica al anillo exterior del tocón.', en:'With herbicide: no label read, no mix. It goes on the outer ring of the stump.'},
+  {c:{truck:1, spotter:1}, es:'Con maquinaria y vehículos: recto dentro de la fila y giro solo en el pasillo. Si no veo, me bajo y reviso.', en:'With machines and vehicles: straight inside the row, turn only in the aisle. If I can’t see, I get out and look.'},
+  {c:{tree:1, fall:1}, end:1, es:'La meta es cero paneles dañados y cero lesiones. Empecemos con la lista inicial y el equipo de protección.', en:'The goal is zero damaged panels and zero injuries. Let’s start with the start checklist and protective equipment.'}
+];
+const V = {i:0, playing:false, voice:true, cc:true, timer:0, tok:0, started:false};
+const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>';
+function videoHTML() {
+  const es = S.lang === 'es', sc = SCENES[V.i];
+  return `<div class="stage">${sceneSVG(sc.c)}
+      ${sc.title ? `<div class="overlay"><span class="vs">${es ? 'Módulo de entrenamiento de campo' : 'Field training module'}</span><span class="vt">Mezquite <span>Seguro</span></span></div>` : ''}
+      ${sc.end ? `<div class="overlay"><span class="vt">${es ? 'Cero daños' : 'Zero damage'}<br><span>${es ? 'Cero lesiones' : 'Zero injuries'}</span></span></div>` : ''}
+      ${!V.playing ? `<button class="bigplay" data-v="play">${PLAY}${V.started ? (V.i === SCENES.length - 1 ? (es ? 'Ver de nuevo' : 'Watch again') : (es ? 'Continuar' : 'Resume')) : (es ? 'Ver presentación · 1 min' : 'Watch intro · 1 min')}</button>` : ''}
+    </div>
+    <p class="cap" aria-live="polite" ${V.cc ? '' : 'hidden'}>${L(sc)}</p>
+    <div class="vbar">
+      <button class="vbtn" data-v="${V.playing ? 'pause' : 'play'}" aria-label="${V.playing ? (es ? 'Pausa' : 'Pause') : (es ? 'Reproducir' : 'Play')}">${V.playing ? '❚❚' : '▶'}</button>
+      <button class="vbtn" data-v="restart" aria-label="${es ? 'Reiniciar' : 'Restart'}">↺</button>
+      <div class="vdots">${SCENES.map((_, i) => `<button data-v="seek" data-i="${i}" class="${i === V.i ? 'on' : (i < V.i ? 'seen' : '')}" aria-label="${es ? 'Escena' : 'Scene'} ${i + 1}"></button>`).join('')}</div>
+      <span class="vtime">${V.i + 1}/${SCENES.length}</span>
+      ${canSpeak ? `<button class="vbtn" data-v="voice" aria-pressed="${V.voice}">${es ? 'Voz' : 'Voice'}</button>` : ''}
+      <button class="vbtn" data-v="cc" aria-pressed="${V.cc}">CC</button>
+    </div>`;
+}
+function updateVideo() { const el = document.getElementById('video'); if (el) el.innerHTML = videoHTML(); }
+function vShow() {
+  updateVideo();
+  clearTimeout(V.timer);
+  if (!V.playing) return;
+  const tok = ++V.tok;
+  const next = () => { if (tok === V.tok && V.playing) V.timer = setTimeout(vNext, 700); };
+  if (V.voice && canSpeak) {
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(L(SCENES[V.i]));
+      u.lang = S.lang === 'es' ? 'es-MX' : 'en-US';
+      u.rate = 0.95;
+      const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith(S.lang));
+      if (v) u.voice = v;
+      u.onend = next; u.onerror = next;
+      speechSynthesis.speak(u);
+      return;
+    } catch (e) {}
+  }
+  V.timer = setTimeout(() => { if (tok === V.tok) vNext(); }, 6500);
+}
+function vNext() { if (V.i < SCENES.length - 1) { V.i++; vShow(); } else { V.playing = false; updateVideo(); } }
+function vPause() { V.playing = false; V.tok++; clearTimeout(V.timer); if (canSpeak) { try { speechSynthesis.cancel(); } catch (e) {} } updateVideo(); }
+function vControl(b) {
+  const a = b.dataset.v;
+  if (a === 'play') { stopSpeak(); if (V.i === SCENES.length - 1 && V.started) V.i = 0; V.started = true; V.playing = true; vShow(); }
+  else if (a === 'pause') vPause();
+  else if (a === 'restart') { V.i = 0; V.started = true; V.playing = true; vShow(); }
+  else if (a === 'seek') { V.i = Number(b.dataset.i); V.started = true; V.tok++; vShow(); }
+  else if (a === 'voice') { V.voice = !V.voice; if (V.playing) vShow(); else updateVideo(); }
+  else if (a === 'cc') { V.cc = !V.cc; updateVideo(); }
+}
+
+/* Incident location report builder */
+const NOTIFY = ['Correo de incidentes del cliente / Client incident email', 'Supervisor del sitio / Site supervisor', 'O&M del sitio / Site O&M', 'Contactos del cliente / Client contacts', 'Operaciones / Operations'];
+const REPF = [
+  {k:'pcs', es:'PCS (etiqueta del pilote)', en:'PCS (pile tag)', ph:'PCS01234'},
+  {k:'lbd', es:'LBD', en:'LBD', ph:'LBD012'},
+  {k:'row', es:'Fila', en:'Row', ph:'42'},
+  {k:'gps', es:'Pin GPS (lat, long)', en:'GPS pin (lat, long)', ph:'00.000000, -00.000000'},
+  {k:'time', es:'Fecha y hora del contacto', en:'Date and time of contact', ph:'10/29 9:15 AM'},
+  {k:'equip', es:'Equipo', en:'Equipment', ph:'Track loader + brush cutter'},
+  {k:'what', es:'Qué pasó (breve)', en:'What happened (short)', ph:'Rear corner contacted module lower edge during turn'},
+  {k:'by', es:'Reporta', en:'Reported by', ph:''}
+];
+function repIssues() {
+  const r = S.rep, es = S.lang === 'es', out = [];
+  if (!/^PCS\d{5}$/i.test((r.pcs || '').trim())) out.push(es ? 'El PCS debe ser "PCS" + 5 dígitos, por ejemplo PCS01234. Revisa la etiqueta del pilote.' : 'PCS must be "PCS" + 5 digits, e.g. PCS01234. Check the pile tag.');
+  if (r.lbd && !/^LBD\d{3}$/i.test(r.lbd.trim())) out.push(es ? 'El LBD debe ser "LBD" + 3 dígitos, por ejemplo LBD012.' : 'LBD must be "LBD" + 3 digits, e.g. LBD012.');
+  if (!/^\d+$/.test((r.row || '').trim())) out.push(es ? 'Escribe el número de fila de la etiqueta.' : 'Enter the row number from the tag.');
+  if (!/^-?\d{1,3}\.\d{3,}\s*,\s*-?\d{1,3}\.\d{3,}$/.test((r.gps || '').trim())) out.push(es ? 'Pon el pin GPS como "latitud, longitud" con decimales.' : 'Enter the GPS pin as "latitude, longitude" with decimals.');
+  if (!r.verified) out.push(es ? 'Confirma que verificaste la ubicación en la etiqueta del pilote.' : 'Confirm you verified the location on the pile tag.');
+  return out;
+}
+const repText = () => {
+  const r = S.rep;
+  return `INCIDENT NOTIFICATION\nDate/time: ${r.time || ''}\nLocation (pile tag, verified): ${(r.pcs || '').toUpperCase()}, ${(r.lbd || '').toUpperCase()}, Row ${r.row || ''}\nGPS pin: ${r.gps || ''}\nEquipment: ${r.equip || ''}\nWhat happened: ${r.what || ''}\nInjuries: ${r.inj ? 'Yes' : 'No'}\nModule flagged/taped off: Yes\nReported by: ${r.by || ''}`;
+};
+function repOut() {
+  const es = S.lang === 'es', iss = repIssues();
+  return `${iss.length ? `<ul class="issues">${iss.map(x => `<li>${x}</li>`).join('')}</ul>` : `<p class="pill good">${es ? 'Listo para enviar' : 'Ready to send'}</p>`}
+    <label for="rep-text" class="lab2">${es ? 'Reporte en inglés para el cliente' : 'Report in English for the client'}</label>
+    <textarea id="rep-text" rows="9" readonly>${esc(repText())}</textarea>
+    <div class="row"><button class="btn go" id="rep-copy" ${iss.length ? 'disabled' : ''}>${es ? 'Copiar reporte' : 'Copy report'}</button><span class="counter" id="rep-msg" aria-live="polite"></span></div>`;
+}
+function reportHTML() {
+  const es = S.lang === 'es', r = S.rep;
+  return `<div class="sign report">
+    <p class="eyebrow">${es ? 'Reporte de ubicación' : 'Location report'}</p>
+    <p>${es ? 'Llénalo frente al pilote. El reporte no se puede copiar hasta que la ubicación tenga el formato correcto y la confirmes.' : 'Fill it in at the pile. The report cannot be copied until the location is in the right format and confirmed.'}</p>
+    <div class="repgrid">${REPF.map(f => `<div class="field"><label for="rep-${f.k}">${L(f)}</label><input type="text" id="rep-${f.k}" data-rep="${f.k}" value="${esc(r[f.k] || '')}" placeholder="${esc(f.ph)}"></div>`).join('')}</div>
+    <div class="row">
+      <label class="tickrow"><input type="checkbox" id="rep-inj" data-repc="inj" ${r.inj ? 'checked' : ''}> ${es ? 'Hay personas lesionadas' : 'Someone is injured'}</label>
+      <label class="tickrow"><input type="checkbox" id="rep-ver" data-repc="verified" ${r.verified ? 'checked' : ''}> ${es ? 'Verifiqué la ubicación en la etiqueta del pilote' : 'I verified the location on the pile tag'}</label>
+    </div>
+    <div id="rep-out">${repOut()}</div>
+    <div><p class="lab2">${es ? 'Lista de notificación (propuesta, por confirmar)' : 'Notification list (proposed, to confirm)'}</p><ul class="notify">${NOTIFY.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>
+  </div>`;
+}
+function noWork() {
+  const es = S.lang === 'es';
+  return `<div class="nowork" role="note"><strong>${es ? 'Sin EPP completo y sin herramientas completas, no se trabaja.' : 'No complete PPE and no complete tools, no work.'}</strong><span>${es ? 'Quien no lleve todo su equipo de protección y de trabajo no entra al área hasta completarlo. El encargado lo verifica antes de salir.' : 'Anyone without all their protective and work gear does not enter the area until it is complete. The lead verifies before heading out.'}</span></div>`;
+}
+function exp(text) { return `<div class="exp"><b>${L(T.ui.exp)}</b><p>${text}</p></div>`; }
+function rule(text) { return `<div class="rule"><span class="tag">${L(T.ui.rule)}</span><p>${text}</p></div>`; }
+/* Daily PPE dress-up exercise */
+const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const todayKey = () => dayKey(new Date());
+const freshGame = task => ({task, start: 0, end: 0, placed: {}, pending: null, last: null});
+const need = () => PPE.filter(p => p.need.includes(S.task));
+const doneToday = () => !!(S.ppeLog[todayKey()] || {})[S.task];
+const fmt = s => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, '0')}`;
+function streak() {
+  let n = 0;
+  const d = new Date();
+  if (!S.ppeLog[dayKey(d)]) d.setDate(d.getDate() - 1);
+  while (S.ppeLog[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function avatar(p, last, label) {
+  const g = (k, body) => p[k] ? `<g class="${k === last ? 'pop' : ''}">${body}</g>` : '';
+  const ink = '#20282D';
+  let s = `<svg class="avatar" viewBox="0 0 240 410" role="img" aria-label="${esc(label)}">`;
+  s += `<ellipse cx="120" cy="398" rx="74" ry="9" fill="var(--sunk)"/>`;
+  s += `<rect x="88" y="240" width="26" height="140" rx="10" fill="var(--skin)"/><rect x="126" y="240" width="26" height="140" rx="10" fill="var(--skin)"/><ellipse cx="100" cy="384" rx="16" ry="8" fill="var(--skin)"/><ellipse cx="140" cy="384" rx="16" ry="8" fill="var(--skin)"/>`;
+  s += `<path d="M84 204h72l4 56h-36l-4-20-4 20H80z" fill="#5F6E77"/>`;
+  s += `<path d="M82 110 64 116 52 226h18l14-90z" fill="var(--skin)"/><path d="M158 110l18 6 12 110h-18l-14-90z" fill="var(--skin)"/>`;
+  s += `<path d="M84 104h72l4 104H80z" fill="#AAB6BD"/><path d="M84 104 62 112 58 146h20z" fill="#AAB6BD"/><path d="M156 104l22 8 4 34h-20z" fill="#AAB6BD"/>`;
+  s += `<circle cx="61" cy="236" r="11" fill="var(--skin)"/><circle cx="179" cy="236" r="11" fill="var(--skin)"/>`;
+  s += `<rect x="111" y="86" width="18" height="20" fill="var(--skin)"/><circle cx="120" cy="66" r="27" fill="var(--skin)"/><path d="M94 60a26 26 0 0 1 52 0c-6-8-14-11-26-11s-20 3-26 11z" fill="#2B2420"/>`;
+  s += `<circle cx="110" cy="68" r="2.6" fill="#2B2420"/><circle cx="130" cy="68" r="2.6" fill="#2B2420"/><path d="M111 80q9 7 18 0" stroke="#2B2420" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  s += g('pants', `<path d="M82 200h76l4 182h-35l-7-128-7 128H78z" fill="#B79A6E"/>`);
+  s += g('shirt', `<path d="M82 102h76l4 108H78z" fill="#C9AF86"/><path d="M82 104 62 112 50 222h22l12-84z" fill="#C9AF86"/><path d="M158 104l20 8 12 110h-22l-12-84z" fill="#C9AF86"/><path d="M108 102l12 12 12-12" stroke="#9C8460" stroke-width="3" fill="none"/>`);
+  s += g('chaps', `<path d="M86 214h30l-2 150H90z" fill="var(--orange)"/><path d="M124 214h30l-4 150h-24z" fill="var(--orange)"/><path d="M90 250h24M90 290h22M126 250h26M128 290h22" stroke="${ink}" stroke-width="2" opacity=".35"/>`);
+  s += g('snake', `<path d="M82 300h37l-1 72H84z" fill="#5E6B3A"/><path d="M121 300h37l-2 72h-34z" fill="#5E6B3A"/><path d="M82 322h37M83 350h35M121 322h37M122 350h35" stroke="#3E4826" stroke-width="3"/>`);
+  s += g('boots', `<path d="M82 364h36v20c0 6-4 8-10 8H76c-6 0-8-4-6-8l12-6z" fill="#6B4423"/><path d="M122 364h36v14l12 6c2 4 0 8-6 8h-32c-6 0-10-2-10-8z" fill="#6B4423"/><path d="M70 392h48M122 392h48" stroke="#3A2414" stroke-width="4"/>`);
+  s += g('vest', `<path d="M86 104h18l16 30 16-30h18l6 104H80z" fill="#D4EE2C"/><path d="M81 160h78M80 184h80" stroke="#C3CACE" stroke-width="7"/>`);
+  s += g('radio', `<rect x="134" y="116" width="13" height="24" rx="2" fill="${ink}"/><path d="M143 116v-12" stroke="${ink}" stroke-width="3" stroke-linecap="round"/><rect x="136" y="120" width="9" height="6" fill="#6FA8D8"/>`);
+  s += g('leather', `<circle cx="61" cy="237" r="13" fill="#8A5A33"/><rect x="50" y="218" width="22" height="10" rx="3" fill="#6E4524"/><circle cx="179" cy="237" r="13" fill="#8A5A33"/><rect x="168" y="218" width="22" height="10" rx="3" fill="#6E4524"/>`);
+  s += g('chem', `<circle cx="61" cy="237" r="13" fill="#2E8C7E"/><rect x="49" y="208" width="24" height="18" rx="3" fill="#25736A"/><circle cx="179" cy="237" r="13" fill="#2E8C7E"/><rect x="167" y="208" width="24" height="18" rx="3" fill="#25736A"/>`);
+  s += g('glasses', `<rect x="102" y="62" width="15" height="11" rx="3" fill="#BFE3F5" fill-opacity=".65" stroke="${ink}" stroke-width="2"/><rect x="123" y="62" width="15" height="11" rx="3" fill="#BFE3F5" fill-opacity=".65" stroke="${ink}" stroke-width="2"/><path d="M117 67h6" stroke="${ink}" stroke-width="2"/>`);
+  s += g('screen', `<path d="M92 58a28 28 0 0 1 56 0" stroke="var(--orange)" stroke-width="5" fill="none"/><rect x="86" y="58" width="12" height="22" rx="5" fill="var(--orange)"/><rect x="142" y="58" width="12" height="22" rx="5" fill="var(--orange)"/><rect x="99" y="52" width="42" height="40" rx="6" fill="${ink}" fill-opacity=".12" stroke="#3A454C" stroke-width="2"/><path d="M106 52v40M113 52v40M120 52v40M127 52v40M134 52v40M99 62h42M99 72h42M99 82h42" stroke="#3A454C" stroke-width="1" opacity=".5"/>`);
+  s += g('hat', `<ellipse cx="120" cy="49" rx="52" ry="9" fill="#C9A66B"/><path d="M94 49a26 24 0 0 1 52 0z" fill="#F2C230"/><path d="M120 26v22" stroke="#D9A91E" stroke-width="3"/>`);
+  return s + '</svg>';
+}
+function weekStrip(log = S.ppeLog) {
+  const d = new Date(); d.setDate(d.getDate() - 6);
+  let o = '';
+  for (let i = 0; i < 7; i++) {
+    const k = dayKey(d), y = !!log[k];
+    o += `<span class="${y ? 'y' : ''}" title="${k}"><i></i>${d.toLocaleDateString(S.lang === 'es' ? 'es-MX' : 'en-US', {weekday: 'short'})}</span>`;
+    d.setDate(d.getDate() + 1);
+  }
+  return `<div class="week" aria-label="${S.lang === 'es' ? 'Últimos 7 días' : 'Last 7 days'}">${o}</div>`;
+}
+function gameHTML() {
+  if (S.game.task !== S.task || (S.game.start && dayKey(new Date(S.game.start)) !== todayKey())) S.game = freshGame(S.task);
+  const es = S.lang === 'es', G = S.game, items = need();
+  const running = G.start && !G.end;
+  const today = (S.ppeLog[todayKey()] || {})[S.task];
+  const shown = (!G.start && today) ? Object.fromEntries(items.map(p => [p.k, true])) : G.placed;
+  const count = items.filter(p => shown[p.k]).length;
+  const best = S.best[S.task];
+  const label = es ? `Muñequito con ${count} de ${items.length} piezas de EPP` : `Figure wearing ${count} of ${items.length} PPE items`;
+  const secs = G.end ? (G.end - G.start) / 1000 : (G.start ? (Date.now() - G.start) / 1000 : 0);
+  let panel = '';
+  if (G.pending) {
+    const p = PPE.find(x => x.k === G.pending);
+    panel = `<div class="confirm" role="dialog" aria-label="${esc(L(p))}">
+      <p class="eyebrow">${es ? 'Confírmalo en tu cuerpo' : 'Confirm it on your body'}</p>
+      <p class="h3">${L(p)}</p>
+      <p>${es ? 'Revisa' : 'Check'}: ${F(p, 'c')}</p>
+      <div class="row"><button class="btn" data-gyes="${p.k}">${es ? 'Sí, la tengo puesta y revisada' : 'Yes, it is on and checked'}</button><button class="btn alt" data-gno="1">${es ? 'Todavía no' : 'Not yet'}</button></div>
+    </div>`;
+  } else if (G.end) {
+    const rec = G.record;
+    const fast = secs < items.length * 4;
+    panel = `<div class="result">
+      <p class="eyebrow">${es ? 'Ejercicio de hoy completado' : 'Today’s exercise complete'}</p>
+      <p class="score">${fmt(secs)}</p>
+      ${rec ? `<p class="pill good">${es ? 'Récord personal' : 'Personal best'}</p>` : (best ? `<p class="counter">${es ? 'Tu mejor tiempo' : 'Your best time'}: ${fmt(best)}</p>` : '')}
+      ${fast ? `<p class="warn">${es ? 'Fue muy rápido. Este ejercicio es para ponerte cada prenda de verdad: si te saltaste alguna, repítelo.' : 'That was very fast. This exercise is for actually putting on each item: if you skipped one, do it again.'}</p>` : ''}
+      <p>${es ? 'Racha' : 'Streak'}: <b>${streak()} ${es ? (streak() === 1 ? 'día' : 'días') : (streak() === 1 ? 'day' : 'days')}</b></p>
+      ${weekStrip()}
+      <div class="row"><button class="btn alt" data-greset="1">${es ? 'Repetir ejercicio' : 'Repeat exercise'}</button></div>
+    </div>`;
+  }
+  return `<div class="game">
+    <div class="stagep">
+      <div class="hud">
+        <span class="pill ${today ? 'good' : 'warn'}">${today ? (es ? `Hoy: listo en ${fmt(today.secs)}` : `Today: done in ${fmt(today.secs)}`) : (es ? 'Ejercicio de hoy pendiente' : 'Today’s exercise pending')}</span>
+        <span class="pill">${es ? 'Racha' : 'Streak'} ${streak()}</span>
+      </div>
+      <p class="timer" id="gtime" aria-live="off">${fmt(secs)}</p>
+      ${avatar(shown, G.last, label)}
+      <p class="counter" aria-live="polite">${count} ${L(T.ui.of)} ${items.length} ${es ? 'piezas' : 'items'}</p>
+      ${!G.start ? `<button class="btn go" data-gstart="1">${today ? (es ? 'Repetir ejercicio' : 'Repeat exercise') : (es ? 'Empezar ejercicio' : 'Start exercise')}</button>` : ''}
+    </div>
+    <div class="section" style="gap:12px">
+      <p>${es ? 'El tiempo es real: ponte cada prenda de verdad y tócala cuando ya la tengas puesta. El muñequito solo se viste con lo que tú confirmas.' : 'The clock is real: actually put on each item and tap it once it is on. The figure only wears what you confirm.'}</p>
+      ${panel}
+      <div class="closet">${items.map(p => {
+        const on = !!G.placed[p.k] || (!G.start && !!today);
+        return `<button class="item ${on ? 'on' : ''} ${G.pending === p.k ? 'pend' : ''}" data-item="${p.k}" ${on || G.end || G.pending ? 'disabled' : ''} aria-pressed="${on}">${icon(p.icon)}<span>${L(p)}</span></button>`;
+      }).join('')}</div>
+      ${best ? `<p class="counter">${es ? 'Mejor tiempo' : 'Best time'} (${L(TASKS.find(t => t.k === S.task))}): ${fmt(best)}</p>` : ''}
+    </div>
+  </div>`;
+}
+/* Gear loading and cooler packing exercises */
+const GEAR = [
+  {k:'tools', code:{es:'HERR', en:'TOOLS'}, es:'Herramientas de trabajo', en:'Work tools', cEs:'Tijeras, serrucho y machete con funda, revisados.', cEn:'Loppers, saw and sheathed machete, inspected.'},
+  {k:'saws', code:{es:'MAQ', en:'SAWS'}, es:'Máquinas de corte', en:'Cutting machines', cEs:'Motosierra y desbrozadora revisadas, combustible en recipiente aprobado, aseguradas para el viaje.', cEn:'Chainsaw and brush cutter inspected, fuel in an approved can, secured for the drive.'},
+  {k:'herb', code:{es:'HERB', en:'HERB'}, es:'Material de herbicida', en:'Herbicide supplies', cEs:'Producto con etiqueta, mochila sin fugas, SDS y kit de derrames, separados de la comida y el agua.', cEn:'Labeled product, leak-free backpack, SDS and spill kit, kept apart from food and water.'},
+  {k:'batt', code:{es:'BAT', en:'BATT'}, es:'Baterías de los equipos', en:'Equipment batteries', cEs:'Aseguradas en un lugar seguro, seco y fresco; lejos del sol directo y del combustible.', cEn:'Secured in a safe, dry, cool place; away from direct sun and fuel.'},
+  {k:'shovel', code:{es:'PALA', en:'SHOVEL'}, es:'Pala y herramientas necesarias', en:'Shovel and required tools', cEs:'Pala, cuadrante, cinta métrica y lo que pida la tarea del día.', cEn:'Shovel, quadrant, measuring tape and whatever today’s task needs.'},
+  {k:'starlink', code:{es:'SL', en:'SL'}, es:'Starlink y conexiones', en:'Starlink and connections', cEs:'Antena, cables, router y fuente de poder completos y protegidos.', cEn:'Dish, cables, router and power supply complete and protected.'},
+  {k:'cams', code:{es:'CAM', en:'CAM'}, es:'Cámaras solicitadas', en:'Requested cameras', cEs:'Las cámaras que se pidieron para hoy, con batería y memoria.', cEn:'The cameras requested for today, with battery and memory.'},
+  {k:'cones', code:{es:'CONO', en:'CONE'}, es:'Barreras, conos y cinta', en:'Barriers, cones and tape', cEs:'Para la zona de exclusión y para acordonar.', cEn:'For the exclusion zone and taping off.'},
+  {k:'tag', code:{es:'ETIQ', en:'TAG'}, es:'Todo etiquetado con el color y código de tu equipo', en:'Everything tagged with your team color and code', cEs:'Así nada se queda en el campo: regresa todo.', cEn:'So nothing stays in the field: return everything.'}
+];
+const COOLER = [
+  {k:'food', es:'Recoger la comida', en:'Pick up the food', cEs:'Pedido recogido y completo para toda la cuadrilla.', cEn:'Order picked up and complete for the whole crew.'},
+  {k:'ice', es:'Hielo', en:'Ice', cEs:'Suficiente para mantener todo frío el día completo.', cEn:'Enough to keep everything cold all day.'},
+  {k:'water', es:'Agua', en:'Water', cEs:'Suficiente para tomar un vaso cada 15 a 20 minutos.', cEn:'Enough for a cup every 15 to 20 minutes.'},
+  {k:'drinks', es:'Bebidas con electrolitos', en:'Electrolyte drinks', cEs:'Para reponer lo que se pierde al sudar.', cEn:'To replace what is lost through sweat.'},
+  {k:'fruit', es:'Fruta', en:'Fruit', cEs:'Fruta fresca para la cuadrilla.', cEn:'Fresh fruit for the crew.'},
+  {k:'snacks', es:'Snacks', en:'Snacks', cEs:'Botanas para las pausas.', cEn:'Snacks for breaks.'},
+  {k:'clean', es:'Hielera limpia y lejos del herbicida', en:'Cooler clean and away from herbicide', cEs:'Nunca junto al combustible ni al material de herbicida.', cEn:'Never next to fuel or herbicide supplies.'}
+];
+function streakOf(log) {
+  let n = 0;
+  const d = new Date();
+  if (!log[dayKey(d)]) d.setDate(d.getDate() - 1);
+  while (log[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function pack(id) {
+  if (!S.packs[id] || S.packs[id].day !== todayKey()) S.packs[id] = {day: todayKey(), placed: {}, pending: null, last: null};
+  return S.packs[id];
+}
+const packLog = id => (S.packLog[id] = S.packLog[id] || {});
+const packDone = id => !!packLog(id)[todayKey()];
+function truckSVG(p, last, items = GEAR) {
+  const es = S.lang === 'es', cols = ['var(--solar)', 'var(--olive)', 'var(--orange)', '#5F6E77', 'var(--trunk)'];
+  let s = `<svg class="scene-sm" viewBox="0 0 360 200" role="img" aria-label="${es ? 'Camioneta con el equipo cargado' : 'Truck with loaded gear'}">`;
+  s += `<rect x="0" y="176" width="360" height="24" fill="var(--soil)"/>`;
+  items.forEach((g, i) => {
+    if (!p[g.k]) return;
+    const x = 34 + (i % 5) * 38, y = i < 5 ? 80 : 50;
+    s += `<g class="${g.k === last ? 'pop' : ''}"><rect x="${x}" y="${y}" width="35" height="28" rx="3" fill="${cols[i % 5]}" stroke="var(--bg)" stroke-width="1.5"/><text x="${x + 17.5}" y="${y + 18}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8.5" fill="#FFFFFF">${L(g.code)}</text></g>`;
+  });
+  s += `<path d="M26 108h208v44H26z" fill="var(--ink)"/><path d="M234 82h52l30 34v36h-82z" fill="var(--ink)"/><path d="M246 90h36l22 26h-58z" fill="var(--sky)"/>`;
+  s += `<rect x="310" y="128" width="12" height="8" rx="2" fill="var(--sun)"/><circle cx="78" cy="156" r="20" fill="#2B3338"/><circle cx="78" cy="156" r="8" fill="#8A969C"/><circle cx="268" cy="156" r="20" fill="#2B3338"/><circle cx="268" cy="156" r="8" fill="#8A969C"/>`;
+  return s + '</svg>';
+}
+function coolerSVG(p, last) {
+  const es = S.lang === 'es';
+  const g = (k, body) => p[k] ? `<g class="${k === last ? 'pop' : ''}">${body}</g>` : '';
+  let s = `<svg class="scene-sm" viewBox="0 0 320 220" role="img" aria-label="${es ? 'Hielera de la cuadrilla' : 'Crew cooler'}">`;
+  s += `<path d="M44 30h232l-8 52H52z" fill="var(--solar)" opacity=".7"/><rect x="52" y="82" width="216" height="22" fill="#DCE8F3"/>`;
+  s += g('ice', `<g fill="#BFE3F5" stroke="#8CC4E3">${[62, 84, 106, 128, 150, 172, 194, 216, 238].map(x => `<rect x="${x}" y="88" width="16" height="13" rx="3"/>`).join('')}</g>`);
+  s += g('water', `<g fill="#4F9BD9">${[66, 82, 98].map(x => `<rect x="${x}" y="46" width="12" height="50" rx="4"/><rect x="${x + 3}" y="40" width="6" height="7" fill="#2B5E8E"/>`).join('')}</g>`);
+  s += g('drinks', `<rect x="120" y="50" width="13" height="46" rx="4" fill="var(--orange)"/><rect x="123" y="44" width="7" height="7" fill="#9A3A07"/><rect x="138" y="50" width="13" height="46" rx="4" fill="#5DBB63"/><rect x="141" y="44" width="7" height="7" fill="#2F7A35"/>`);
+  s += g('fruit', `<path d="M164 84c10 10 30 8 36-6-8 6-24 8-34 0z" fill="#F2C230"/><circle cx="186" cy="70" r="10" fill="#D23B2E"/><path d="M186 60l3-6" stroke="#4E6B2A" stroke-width="2"/>`);
+  s += g('food', `<rect x="210" y="46" width="34" height="50" rx="3" fill="#B5895A"/><path d="M210 58h34" stroke="#8E6A42" stroke-width="2"/><text x="227" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#FFFFFF">${es ? 'COMIDA' : 'FOOD'}</text>`);
+  s += g('snacks', `<rect x="248" y="58" width="16" height="36" rx="2" fill="#C2410C" transform="rotate(12 256 76)"/>`);
+  s += `<rect x="40" y="100" width="240" height="104" rx="14" fill="var(--solar)"/><rect x="40" y="100" width="240" height="14" fill="#FFFFFF" opacity=".25"/><rect x="132" y="140" width="56" height="12" rx="6" fill="#FFFFFF" opacity=".35"/>`;
+  s += g('clean', `<circle cx="252" cy="176" r="14" fill="var(--good)"/><path d="M245 176l5 5 9-10" stroke="#FFFFFF" stroke-width="3" fill="none"/>`);
+  return s + '</svg>';
+}
+function packHTML(id, items, scene, title) {
+  const es = S.lang === 'es', P = pack(id), done = packDone(id);
+  const shown = done ? Object.fromEntries(items.map(x => [x.k, true])) : P.placed;
+  const count = items.filter(x => shown[x.k]).length;
+  let panel = '';
+  if (P.pending) {
+    const it = items.find(x => x.k === P.pending);
+    panel = `<div class="confirm" role="dialog" aria-label="${esc(L(it))}">
+      <p class="h3">${L(it)}</p><p>${es ? 'Revisa' : 'Check'}: ${F(it, 'c')}</p>
+      <div class="row"><button class="btn" data-pyes="${id}" data-k="${it.k}">${es ? 'Sí, listo' : 'Yes, done'}</button><button class="btn alt" data-pno="${id}">${es ? 'Todavía no' : 'Not yet'}</button></div></div>`;
+  } else if (done) {
+    const n = streakOf(packLog(id));
+    panel = `<div class="result"><p class="eyebrow">${es ? 'Listo por hoy' : 'Done for today'}</p><p>${es ? 'Racha' : 'Streak'}: <b>${n} ${es ? (n === 1 ? 'día' : 'días') : (n === 1 ? 'day' : 'days')}</b></p>${weekStrip(packLog(id))}</div>`;
+  }
+  return `<div class="game">
+    <div class="stagep">
+      <div class="hud"><span class="pill ${done ? 'good' : 'warn'}">${done ? (es ? 'Hoy: listo' : 'Today: done') : (es ? 'Pendiente hoy' : 'Pending today')}</span><span class="pill">${count} ${L(T.ui.of)} ${items.length}</span></div>
+      <p class="h3">${title}</p>
+      ${scene(shown, P.last)}
+    </div>
+    <div class="section" style="gap:12px">
+      ${panel}
+      <div class="closet">${items.map(x => {
+        const on = !!shown[x.k];
+        return `<button class="item ${on ? 'on' : ''} ${P.pending === x.k ? 'pend' : ''}" data-pitem="${id}" data-k="${x.k}" ${on || P.pending ? 'disabled' : ''} aria-pressed="${on}"><span class="tick">${on ? '✓' : ''}</span><span>${L(x)}</span></button>`;
+      }).join('')}</div>
+    </div>
+  </div>`;
+}
+function crewTurn(offset) {
+  const names = (S.crew.names || '').split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+  if (!names.length) return '';
+  const days = Math.floor((new Date().setHours(0, 0, 0, 0) - new Date(2026, 0, 5).getTime()) / 864e5);
+  const idx = (S.crew.mode === 'week' ? Math.floor(days / 7) : days) + offset;
+  return names.at(((idx % names.length) + names.length) % names.length);
+}
+function turnHTML() {
+  const es = S.lang === 'es', who = crewTurn(0), next = crewTurn(1), wk = S.crew.mode === 'week';
+  if (!who) return `<p class="counter">${es ? 'Escribe los nombres de la cuadrilla para asignar turnos.' : 'Enter the crew names to assign turns.'}</p>`;
+  return `<div class="turn"><span class="pill ${packDone('cooler') ? 'good' : 'warn'}">${packDone('cooler') ? (es ? 'Hielera lista' : 'Cooler ready') : (es ? 'Hielera pendiente' : 'Cooler pending')}</span>
+    <p class="who">${es ? (wk ? 'Esta semana le toca a' : 'Hoy le toca a') : (wk ? 'This week it’s' : 'Today it’s')} ${esc(who)}</p>
+    <p class="counter">${es ? (wk ? 'La próxima semana' : 'Mañana') : (wk ? 'Next week' : 'Tomorrow')}: ${esc(next)}</p></div>`;
+}
+const isOn = (store, i) => {
+  const a = ({start: START, leave: LEAVE})[store]?.[i]?.auto;
+  if (a === 'ppe') return doneToday();
+  if (a === 'gear') return packDone('gear');
+  if (a === 'cooler') return packDone('cooler');
+  if (a === 'ret') return packDone('ret');
+  return !!S[store][i];
+};
+const PACKS = {gear: GEAR, cooler: COOLER, ret: RETURN};
+function dailyReset() {
+  if (S.formsDay !== todayKey()) { S.formsDay = todayKey(); S.start = {}; S.leave = {}; S.sign = {}; }
+}
+function morningHTML() {
+  const es = S.lang === 'es';
+  const allStart = START.every((_, i) => isOn('start', i));
+  const who = crewTurn(0);
+  const forms = [
+    {done: doneToday(), go: 'epp', es: 'EPP del día con el muñequito', en: 'Daily PPE with the figure'},
+    {done: packDone('gear'), go: 'carga', es: 'Carga del equipo', en: 'Gear loading'},
+    {done: packDone('cooler'), go: 'carga', es: `Hielera y comida${who ? ` (le toca a ${who})` : ''}`, en: `Cooler and food${who ? ` (${who}’s turn)` : ''}`},
+    {done: allStart, go: 'carga', es: 'Lista final antes de salir', en: 'Final check before heading out'},
+    {done: !!S.sign.start, go: 'carga', es: 'Firma del encargado', en: 'Lead’s sign-off'}
+  ];
+  const n = forms.filter(f => f.done).length, ready = n === forms.length;
+  const date = new Date().toLocaleDateString(es ? 'es-MX' : 'en-US', {weekday: 'long', day: 'numeric', month: 'long'});
+  return `<div class="morning ${ready ? 'ok' : ''}">
+    <div class="qhead"><div><p class="eyebrow">${es ? 'Obligatorio cada mañana' : 'Required every morning'} · ${esc(date)}</p>
+      <h2 class="h2">${es ? 'Formularios de seguridad de hoy' : 'Today’s safety forms'}</h2></div>
+      <span class="score">${n}/${forms.length}</span></div>
+    <div class="progress big"><i style="width:${n / forms.length * 100}%"></i></div>
+    <ol class="forms">${forms.map(f => `<li class="${f.done ? 'done' : ''}"><span class="box">✓</span><span>${L(f)}</span>${f.done ? `<span class="pill good">${es ? 'Listo' : 'Done'}</span>` : `<button class="btn alt sm" data-go="${f.go}">${es ? 'Llenar' : 'Fill in'}</button>`}</li>`).join('')}</ol>
+    <p class="${ready ? 'pill good' : 'warn-line'}">${ready ? (es ? 'Todo listo. La cuadrilla puede entrar al campo.' : 'All set. The crew can enter the field.') : (es ? 'Nadie entra al campo hasta completar los formularios de hoy. Sin EPP completo y sin herramientas completas, no se trabaja.' : 'No one enters the field until today’s forms are complete. No complete PPE and tools, no work.')}</p>
+  </div>`;
+}
+function dayState() {
+  if (!S.day || S.day.date !== todayKey()) { S.day = {date: todayKey(), water: [], breaks: [], meal: 0}; S.during = {}; }
+  return S.day;
+}
+const hhmm = ts => new Date(ts).toLocaleTimeString(S.lang === 'es' ? 'es-MX' : 'en-US', {hour: 'numeric', minute: '2-digit'});
+function waterHTML() {
+  const es = S.lang === 'es', d = dayState(), last = d.water.at(-1);
+  const m = last ? Math.floor((Date.now() - last) / 60000) : null, late = m === null || m >= 20;
+  const lvl = Math.min(d.water.length / 8, 1), top = 112 - lvl * 106;
+  return `<svg viewBox="0 0 100 120" class="drop" aria-hidden="true"><defs><clipPath id="dropclip"><path d="M50 6C50 6 14 50 14 76a36 36 0 0 0 72 0C86 50 50 6 50 6z"/></clipPath></defs>
+      <path d="M50 6C50 6 14 50 14 76a36 36 0 0 0 72 0C86 50 50 6 50 6z" fill="var(--solar-soft)" stroke="var(--solar)" stroke-width="3"/>
+      <rect x="0" y="${top}" width="100" height="120" fill="var(--solar)" clip-path="url(#dropclip)" opacity=".85"/></svg>
+    <div class="section" style="gap:6px">
+      <p class="eyebrow">${es ? 'Agua' : 'Water'}</p>
+      <p><span class="score">${d.water.length}</span> ${es ? (d.water.length === 1 ? 'vaso hoy' : 'vasos hoy') : (d.water.length === 1 ? 'cup today' : 'cups today')}</p>
+      <p class="counter">${last ? (es ? `Último vaso hace ${m} min (${hhmm(last)})` : `Last cup ${m} min ago (${hhmm(last)})`) : (es ? 'Todavía no registras agua hoy' : 'No water logged yet today')}</p>
+      <p class="pill ${late ? 'warn' : 'good'}">${late ? (es ? 'Toca tomar agua' : 'Time to drink') : (es ? 'Vas bien' : 'On track')}</p>
+      <p>${es ? 'Un vaso cada 15 a 20 minutos, aunque no tengas sed.' : 'One cup every 15 to 20 minutes, even if you are not thirsty.'}</p>
+      <button class="btn go" data-water="1">${es ? 'Tomé un vaso de agua' : 'I drank a cup of water'}</button>
+    </div>`;
+}
+function heatHTML() {
+  const es = S.lang === 'es';
+  return `<div class="heat">
+    <h3 class="h3">${es ? 'Señales de estrés por calor' : 'Signs of heat stress'}</h3>
+    <ul>${[['Sudor excesivo', 'Heavy sweating'], ['Dolor de cabeza o mareo', 'Headache or dizziness'], ['Pulso rápido', 'Fast heartbeat'], ['Calambres', 'Muscle cramps'], ['Náusea', 'Nausea'], ['Confusión', 'Confusion']].map(x => `<li>${es ? x[0] : x[1]}</li>`).join('')}</ul>
+    <p><b>${es ? 'Toma agua seguido, antes de tener sed. Si los síntomas empeoran, pide ayuda de inmediato.' : 'Drink often, before you are thirsty. If symptoms get worse, get help immediately.'}</b></p>
+  </div>`;
+}
+const ROLES = [{es:'Supervisor de cuadrilla', en:'Crew supervisor'}, {es:'Líder de seguridad', en:'Safety lead'}];
+function signoff(list, store) {
+  const es = S.lang === 'es';
+  const sg = S.sign[store];
+  const missing = list.filter((_, i) => !isOn(store, i)).length;
+  if (sg) return `<div class="sign ok"><div><p class="eyebrow">${es ? 'Verificado por el encargado' : 'Verified by the person in charge'}</p>
+    <p class="who">${esc(sg.name)} · ${L(ROLES[sg.role])}</p>
+    <p class="counter">${new Date(sg.at).toLocaleString(es ? 'es-MX' : 'en-US', {dateStyle: 'medium', timeStyle: 'short'})}</p></div>
+    <button class="btn alt" data-unsign="${store}">${es ? 'Deshacer' : 'Undo'}</button></div>`;
+  const d = S.signDraft[store] || {name: '', role: 0};
+  return `<div class="sign"><p class="eyebrow">${es ? 'Encargado de la verificación' : 'Person in charge of the check'}</p>
+    <div class="row">
+      <div class="field"><label for="enc-${store}">${es ? 'Nombre' : 'Name'}</label><input type="text" id="enc-${store}" data-draft="${store}" value="${esc(d.name)}" autocomplete="name"></div>
+      <div class="field"><label for="rol-${store}">${es ? 'Rol' : 'Role'}</label><select id="rol-${store}" data-draftrole="${store}">${ROLES.map((r, i) => `<option value="${i}" ${d.role == i ? 'selected' : ''}>${L(r)}</option>`).join('')}</select></div>
+    </div>
+    <div class="row"><button class="btn go" data-sign="${store}" ${missing ? 'disabled' : ''}>${es ? 'Confirmar verificación' : 'Confirm check'}</button>
+    <span class="counter" id="sign-msg-${store}" aria-live="polite">${missing ? (es ? `Faltan ${missing} puntos por marcar.` : `${missing} items left to check.`) : ''}</span></div>
+  </div>`;
+}
+function checklist(list, store) {
+  const es = S.lang === 'es';
+  const auto = i => store === 'start' && !!list[i].auto;
+  const how = i => ({
+    ppe: {es:'el ejercicio de EPP con el muñequito (paso 1)', en:'the PPE exercise with the figure (step 1)'},
+    gear: {es:'la carga del equipo en la camioneta (arriba)', en:'loading the gear in the truck (above)'},
+    cooler: {es:'la hielera del día (arriba)', en:'today’s cooler (above)'},
+    ret: {es:'el ejercicio "Regresa todo" (arriba)', en:'the "Return everything" exercise (above)'}
+  })[list[i].auto];
+  const on = i => isOn(store, i);
+  const n = list.filter((_, i) => on(i)).length;
+  return `<p class="counter" aria-live="polite">${n} ${L(T.ui.of)} ${list.length} ${L(T.ui.done)}</p>
+  <ul class="checks">${list.map((it, i) => auto(i)
+    ? `<li><button class="auto ${on(i) ? '' : 'lock'}" aria-pressed="${on(i)}" disabled><span class="box">✓</span><span>${L(it)}<small>${on(i) ? (es ? `Se marcó solo al completar ${L(how(i))}.` : `Checked automatically by ${L(how(i))}.`) : (es ? `Se marca solo al completar ${L(how(i))}.` : `Checks itself once you complete ${L(how(i))}.`)}</small></span></button></li>`
+    : `<li><button data-check="${store}" data-i="${i}" aria-pressed="${on(i)}"><span class="box">✓</span><span>${L(it)}</span></button></li>`).join('')}</ul>`;
+}
+function question(q, id, opts) {
+  const ans = opts[id];
+  const done = ans !== undefined;
+  return `<div class="q">
+    <p class="qtext">${L(q)}</p>
+    <div class="opts">${q.o.map((o, i) => {
+      let cls = '';
+      if (done && i === q.a) cls = 'right';
+      else if (done && i === ans) cls = 'wrong';
+      return `<button class="opt ${cls}" data-q="${id}" data-i="${i}" ${done ? 'disabled' : ''}><span class="k">${'ABCD'[i]}</span><span>${L(o)}</span></button>`;
+    }).join('')}</div>
+    <div aria-live="polite">${done ? `<p class="fb ${ans === q.a ? 'ok' : 'no'}"><b>${ans === q.a ? L(T.ui.ok) : L(T.ui.no)}</b> ${F(q, 'w')}</p>` : ''}</div>
+  </div>`;
+}
+
+const VIEWS = {
+  inicio() {
+    const es = S.lang === 'es';
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Módulo de entrenamiento · Cuadrilla de campo' : 'Training module · Field crew'}</p>
+      <h1 class="h1">${es ? 'Cero paneles dañados. Cero lesiones.' : 'Zero damaged panels. Zero injuries.'}</h1>
+      <p class="lead">${es ? 'Ustedes ya saben cortar mezquite y aplicar herbicida. Este módulo trata de algo más difícil: hacerlo junto a paneles solares sin que nada ni nadie salga dañado.' : 'You already know how to cut mesquite and apply herbicide. This module is about something harder: doing it next to solar panels without anything or anyone getting hurt.'}</p>
+      <div class="video" id="video">${videoHTML()}</div>
+      ${morningHTML()}
+      <h2 class="h2">${es ? 'Elige por dónde empezar' : 'Choose where to start'}</h2>
+      <div class="paths">
+        <button class="path" data-go="epp"><strong>${es ? '1 · Vístete: EPP del día' : '1 · Suit up: daily PPE'}</strong><span>${es ? 'La ruta completa, en orden.' : 'The full route, in order.'}</span></button>
+        <button class="path" data-go="accidente"><strong>${es ? '6 · Si hay un accidente' : '6 · If there is an accident'}</strong><span>${es ? 'Lo que hay que saber de memoria.' : 'What you must know by heart.'}</span></button>
+        <button class="path" data-go="evaluacion"><strong>${es ? 'Ponte a prueba' : 'Test yourself'}</strong><span>${es ? `${QUIZ.length} situaciones reales del sitio.` : `${QUIZ.length} real site situations.`}</span></button>
+      </div>
+    </section>`;
+  },
+  epp() {
+    const es = S.lang === 'es';
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Paso 1 · Todos los días' : 'Step 1 · Every day'}</p>
+      <h1 class="h2">${es ? 'Vístete para el campo' : 'Suit up for the field'}</h1>
+      <p class="lead">${es ? 'Ejercicio diario: ponte cada prenda de EPP y confírmala. El muñequito solo se viste con lo que tú ya llevas puesto.' : 'Daily exercise: put on each PPE item and confirm it. The figure only wears what you already have on.'}</p>
+      <h2 class="h3">${es ? '¿Qué vas a hacer hoy?' : 'What are you doing today?'}</h2>
+      <div class="chips" role="group">${TASKS.map(t => `<button class="chip" data-task="${t.k}" aria-pressed="${S.task === t.k}">${L(t)}</button>`).join('')}</div>
+      ${gameHTML()}
+      <p>${es ? 'Lo que la etiqueta del herbicida agregue también es obligatorio.' : 'Anything the herbicide label adds is also mandatory.'}</p>
+      ${noWork()}
+      ${exp(es ? '¿Qué pieza de EPP es la que más se quita por el calor? ¿Cómo lo resolvemos como cuadrilla?' : 'Which PPE item comes off most because of the heat? How do we solve that as a crew?')}
+    </section>`;
+  },
+  carga() {
+    const es = S.lang === 'es';
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Paso 2 · Antes de salir' : 'Step 2 · Before heading out'}</p>
+      <h1 class="h2">${es ? 'Equipo y hielera' : 'Gear and cooler'}</h1>
+      <p class="lead">${es ? 'Cada persona que sale al campo confirma que lleva su equipo. El encargado del día alista la hielera.' : 'Everyone heading to the field confirms their gear is on board. The day’s lead packs the cooler.'}</p>
+      ${noWork()}
+      <h2 class="h3">${es ? 'Carga tu equipo' : 'Load your gear'}</h2>
+      <p>${es ? 'Toca cada artículo cuando ya esté en la camioneta y asegurado.' : 'Tap each item once it is in the truck and secured.'}</p>
+      ${packHTML('gear', GEAR, truckSVG, es ? 'Camioneta' : 'Truck')}
+      <h2 class="h3">${es ? 'Hielera y comida' : 'Cooler and food'}</h2>
+      <div class="sign">
+        <p class="eyebrow">${es ? 'Encargado de hielera y comida' : 'Cooler and food lead'}</p>
+        <div class="row" style="align-items:flex-start">
+          <div class="field" style="flex:1 1 240px"><label for="crew">${es ? 'Cuadrilla: un nombre por línea, en orden de turno' : 'Crew: one name per line, in turn order'}</label><textarea id="crew" rows="4" data-crew="1">${esc(S.crew.names || '')}</textarea></div>
+          <div class="field"><span class="lab2">${es ? 'Cambia de encargado' : 'Lead rotates'}</span><div class="chips" role="group">
+            <button class="chip" data-crewmode="day" aria-pressed="${S.crew.mode !== 'week'}">${es ? 'Cada día' : 'Daily'}</button>
+            <button class="chip" data-crewmode="week" aria-pressed="${S.crew.mode === 'week'}">${es ? 'Cada semana' : 'Weekly'}</button></div></div>
+        </div>
+        <div id="turnbox" aria-live="polite">${turnHTML()}</div>
+      </div>
+      ${packHTML('cooler', COOLER, coolerSVG, es ? 'Hielera' : 'Cooler')}
+      ${heatHTML()}
+      <h2 class="h3">${es ? 'Lista final antes de salir' : 'Final check before heading out'}</h2>
+      ${checklist(START, 'start')}
+      ${signoff(START, 'start')}
+    </section>`;
+  },
+  equipo() {
+    const es = S.lang === 'es';
+    const t = TOOLS.find(x => x.k === S.tool);
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Paso 3 · Durante el trabajo' : 'Step 3 · During the work'}</p>
+      <h1 class="h2">${es ? 'Cómo manejar el equipo' : 'How to handle the equipment'}</h1>
+      <p class="lead">${es ? 'Cada herramienta se revisa, se arranca y se opera siempre igual. Las distancias son referencias: mandan el manual, la etiqueta y las reglas del sitio.' : 'Every tool is checked, started and run the same way every time. Distances are references: the manual, the label and site rules govern.'}</p>
+      <div class="tabs" role="tablist">${TOOLS.map(x => `<button class="tab" role="tab" data-tool="${x.k}" aria-selected="${x.k === S.tool}">${L(x)}</button>`).join('')}</div>
+      ${figure(t.k)}
+      ${t.noteEs ? `<p class="pill warn">${F(t, 'note')}</p>` : ''}
+      <div class="split">
+        <ol class="steps">${t.steps.map(s => `<li><div><b>${F(s, 'b')}</b>${L(s)}</div></li>`).join('')}</ol>
+        <div class="section" style="gap:14px">
+          ${rule(F(t, 'rule'))}
+          ${exp(F(t, 'exp'))}
+          <p class="eyebrow">${L(T.ui.quick)}</p>
+          ${question(t.q, 'tool-' + t.k, S.qc)}
+        </div>
+      </div>
+      ${MAINT[t.k] ? `<h2 class="h3">${es ? 'Mantenimiento' : 'Maintenance'}</h2>
+      <p>${es ? 'Los intervalos exactos (horas, tipo de aceite, proporción de mezcla) están en el manual del fabricante de cada máquina.' : 'Exact intervals (hours, oil type, mix ratio) are in each machine’s manufacturer manual.'}</p>
+      <div class="maint">${MAINT[t.k].map(g => `<div><p class="eyebrow">${F(g, 'w')}</p><ul>${g.items.map(x => `<li>${es ? x[0] : x[1]}</li>`).join('')}</ul></div>`).join('')}</div>` : ''}
+    </section>`;
+  },
+  jornada() {
+    const es = S.lang === 'es', d = dayState(), lb = d.breaks.at(-1);
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Paso 4 · Toda la jornada' : 'Step 4 · All day long'}</p>
+      <h1 class="h2">${es ? 'Durante la jornada' : 'During the day'}</h1>
+      <p class="lead">${es ? 'Protección puesta, agua seguido y comida a tiempo. El calor y el cansancio causan errores con la maquinaria.' : 'Protection on, water often, food on time. Heat and fatigue cause mistakes with machinery.'}</p>
+      <div class="daygrid">
+        <div id="waterbox" class="water">${waterHTML()}</div>
+        <div class="sign">
+          <p class="eyebrow">${es ? 'Pausas y comida' : 'Breaks and food'}</p>
+          <div class="row"><button class="btn alt" data-brk="1">${es ? 'Pausa en la sombra' : 'Shade break'}</button><span class="counter">${d.breaks.length} ${es ? (d.breaks.length === 1 ? 'pausa' : 'pausas') : (d.breaks.length === 1 ? 'break' : 'breaks')}${lb ? ` · ${es ? 'última' : 'last'} ${hhmm(lb)}` : ''}</span></div>
+          <div class="row"><button class="btn ${d.meal ? '' : 'alt'}" data-meal="1" aria-pressed="${!!d.meal}">${d.meal ? (es ? `Comida registrada · ${hhmm(d.meal)}` : `Meal logged · ${hhmm(d.meal)}`) : (es ? 'Ya comí' : 'I ate')}</button></div>
+          <p class="counter">${es ? 'Come a la hora acordada, en la sombra y lejos del herbicida y el combustible. Lávate manos y cara antes.' : 'Eat at the agreed time, in the shade, away from herbicide and fuel. Wash hands and face first.'}</p>
+        </div>
+      </div>
+      <h2 class="h3">${es ? 'Protección durante el trabajo' : 'Protection while working'}</h2>
+      ${checklist(DURING, 'during')}
+      ${heatHTML()}
+      ${exp(es ? '¿Qué hace que dejemos de tomar agua cuando hay mucho trabajo? ¿Cómo nos lo recordamos entre todos?' : 'What makes us stop drinking water when work gets busy? How do we remind each other?')}
+    </section>`;
+  },
+  salida() {
+    const es = S.lang === 'es';
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Paso 5 · Al terminar' : 'Step 5 · When finishing'}</p>
+      <h1 class="h2">${es ? 'Lista al salir del campo' : 'Checklist when leaving the field'}</h1>
+      <p class="lead">${es ? 'La jornada termina cuando el área, el equipo y las personas quedan revisados, no cuando se apaga la última herramienta.' : 'The day ends when the area, the equipment and the people are checked, not when the last tool shuts off.'}</p>
+      <h2 class="h3">${es ? 'Regresa todo' : 'Return everything'}</h2>
+      <p>${es ? 'Empieza por el clima: si va a llover, primero se tapa y asegura el equipo. Toca cada artículo cuando ya esté de regreso en la camioneta y asegurado.' : 'Start with the weather: if rain is coming, cover and secure the gear first. Tap each item once it is back in the truck and secured.'}</p>
+      ${packHTML('ret', RETURN, (s, l) => truckSVG(s, l, RETURN), es ? 'Camioneta de regreso' : 'Truck going back')}
+      <h2 class="h3">${es ? 'Lista de salida' : 'Leaving checklist'}</h2>
+      ${checklist(LEAVE, 'leave')}
+      ${signoff(LEAVE, 'leave')}
+      ${exp(es ? 'En el recorrido final, ¿qué es lo más fácil de pasar por alto junto a los paneles?' : 'On the final walk, what is easiest to miss next to the panels?')}
+    </section>`;
+  },
+  accidente() {
+    const es = S.lang === 'es';
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Paso 6 · Protocolo' : 'Step 6 · Protocol'}</p>
+      <h1 class="h2">${es ? 'Si hay un accidente' : 'If there is an accident'}</h1>
+      <p class="lead">${es ? 'Lesión, exposición a herbicida o daño a equipo: los mismos seis pasos, en este orden. Nadie sigue trabajando hasta que el supervisor lo autorice.' : 'Injury, herbicide exposure or equipment damage: the same six steps, in this order. No one resumes work until the supervisor says so.'}</p>
+      <div class="phones">
+        <div class="phone"><span class="lab">${es ? 'Emergencias' : 'Emergency'}</span><span class="nb">911</span></div>
+        <div class="phone"><span class="lab">${es ? 'Control de Envenenamientos (EE. UU.)' : 'Poison Control (US)'}</span><span class="nb">1-800-222-1222</span></div>
+      </div>
+      ${figure('crash')}
+      <h2 class="h3">${es ? 'Si alguien se lesiona' : 'If someone is hurt'}</h2>
+      <ol class="stop">${ALTO.map(a => `<li><b>${F(a, 'b')}</b><span>${L(a)}</span></li>`).join('')}</ol>
+      <h2 class="h3">${es ? 'Si una máquina o herramienta toca un panel o estructura' : 'If a machine or tool contacts a panel or structure'}</h2>
+      <p>${es ? 'Protocolo del incidente de un incidente real. Reportar siempre, nunca ocultar, no intentar reparar ni mover evidencia.' : 'Protocol from a real incident. Always report, never conceal, do not repair or move evidence.'}</p>
+      <ol class="stop contact">${CONTACT.map(a => `<li><b>${F(a, 'b')}</b><span>${L(a)}</span></li>`).join('')}</ol>
+      ${reportHTML()}
+      <div class="lessons">
+        <h2 class="h3">${es ? 'Lo que aprendimos de un incidente real' : 'What we learned from a real incident'}</h2>
+        <p>${es ? 'Un minicargador con desbrozadora, al girar dentro de la fila para alejarse del array, rozó con su esquina trasera el borde inferior de un módulo inclinado. No hubo lesionados.' : 'A track loader with a brush cutter, turning in the row away from the array, grazed a tilted module’s lower edge with its rear corner. No injuries.'}</p>
+        <div class="do">
+          <div class="y"><span class="lab">${es ? 'Lo que salió bien' : 'What went right'}</span><ul>
+            <li>${es ? 'El operador reportó el contacto, sin ocultarlo' : 'The operator reported the contact, no concealment'}</li>
+            <li>${es ? 'Paro de trabajo en unos 75 minutos' : 'Stand-down within about 75 minutes'}</li>
+            <li>${es ? 'Cuadrilla y equipo fuera de los arrays a las 11:00' : 'Crew and equipment out of the arrays by 11:00'}</li>
+            <li>${es ? 'Evidencia conservada, sin intentar reparar' : 'Evidence preserved, no repair attempted'}</li>
+            <li>${es ? 'Declaración y reconstrucción el mismo día' : 'Statement and reconstruction the same day'}</li></ul></div>
+          <div class="n"><span class="lab">${es ? 'Lo que no' : 'What didn’t'}</span><ul>
+            <li>${es ? 'Ubicación reportada mal dos veces' : 'Location reported wrong twice'}</li>
+            <li>${es ? 'O&M tardó unas 5.5 horas en encontrar el módulo' : 'O&M took about 5.5 hours to find the module'}</li>
+            <li>${es ? 'Sin barricada en el módulo hasta las 2:50 PM' : 'No barricade at the module until 2:50 PM'}</li>
+            <li>${es ? 'El reporte salió antes de verificar la ubicación' : 'The report went out before the location was verified'}</li>
+            <li>${es ? 'No se envió al correo de incidentes del cliente' : 'Not sent to the client incident email'}</li></ul></div>
+        </div>
+        ${exp(es ? 'Si hubieran leído la etiqueta del pilote y puesto un pin GPS en ese momento, ¿cuánto tiempo se habría ahorrado O&M?' : 'If the pile tag had been read and a GPS pin dropped at that moment, how much time would O&M have saved?')}
+      </div>
+      <h2 class="h3">${es ? 'Qué hacer según el tipo' : 'What to do by type'}</h2>
+      <div class="types">${TYPES.map(t => `<details class="type"><summary>${L(t)}</summary><div class="do"><div class="y"><span class="lab">${es ? 'Hacer' : 'Do'}</span><span>${F(t, 'y')}</span></div><div class="n"><span class="lab">${es ? 'No hacer' : 'Do not'}</span><span>${F(t, 'n')}</span></div></div></details>`).join('')}</div>
+      <div class="near">
+        <h2 class="h3">${es ? 'Casi-incidentes también se reportan' : 'Near misses are reported too'}</h2>
+        <p>${es ? 'Algo que pudo causar daño y no lo causó. Es la oportunidad de corregir antes del golpe.' : 'Something that could have caused harm and didn’t. It is the chance to fix things before the hit.'}</p>
+        <ul>
+          <li>${es ? 'Ver paneles en el suelo justo antes de entrar a la fila.' : 'Seeing panels on the ground just before entering the row.'}</li>
+          <li>${es ? 'Quedar sin espacio para dar la vuelta.' : 'Running out of room to turn around.'}</li>
+          <li>${es ? 'Una piedra lanzada que pasa cerca de un panel.' : 'A thrown rock passing close to a panel.'}</li>
+        </ul>
+        <p><b>${es ? 'Detener, corregir y avisar en el mismo turno. Reportar se reconoce, nunca se sanciona.' : 'Stop, correct and report the same shift. Reporting is recognized, never penalized.'}</b></p>
+      </div>
+    </section>`;
+  },
+  nuevo() {
+    const es = S.lang === 'es';
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Paso 7 · Si se repite' : 'Step 7 · If it happens again'}</p>
+      <h1 class="h2">${es ? 'Qué hacer si ocurre un nuevo accidente' : 'What to do if a new accident happens'}</h1>
+      <p class="lead">${es ? 'Un segundo accidente indica que un control no funcionó. El objetivo es corregir el sistema y evitar el tercero.' : 'A second accident means a control did not work. The goal is to fix the system and prevent a third.'}</p>
+      <ol class="tl">${NEW.map((n, i) => `<li><span class="n">${i + 1}</span><div><p class="when">${F(n, 'w')}</p><p>${L(n)}</p></div></li>`).join('')}</ol>
+      <div class="near"><p>${es ? 'Si la investigación muestra que se omitieron pasos a propósito, aplica la política disciplinaria de la empresa. Reportar o detener el trabajo nunca se sanciona.' : 'If the investigation shows steps were skipped on purpose, the company disciplinary policy applies. Reporting or stopping work is never penalized.'}</p></div>
+      ${rule(es ? 'Cualquiera puede detener el trabajo, y nadie será regañado por hacerlo.' : 'Anyone can stop the work, and no one will be scolded for it.')}
+    </section>`;
+  },
+  evaluacion() {
+    const es = S.lang === 'es';
+    const answered = Object.keys(S.quiz).length;
+    const right = QUIZ.filter((q, i) => S.quiz[i] === q.a).length;
+    const finished = answered === QUIZ.length;
+    const pass = right >= QUIZ.length - 2;
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Evaluación · Situaciones del sitio' : 'Assessment · Site situations'}</p>
+      <div class="qhead"><h1 class="h2">${es ? '¿Qué harías?' : 'What would you do?'}</h1><span class="counter">${answered} ${L(T.ui.of)} ${QUIZ.length}</span></div>
+      <p class="lead">${es ? `${QUIZ.length} situaciones reales. Cada respuesta explica el porqué. Se aprueba con ${QUIZ.length - 2} de ${QUIZ.length}; la observación en campo del supervisor completa la evaluación.` : `${QUIZ.length} real situations. Each answer explains why. Pass with ${QUIZ.length - 2} of ${QUIZ.length}; the supervisor’s field observation completes the assessment.`}</p>
+      ${finished ? `<div class="badge ${pass ? '' : 'retry'}">
+        <span class="score">${right}/${QUIZ.length}</span>
+        <h2 class="h3">${pass ? (es ? 'Aprobado. Listo para la observación en campo.' : 'Passed. Ready for field observation.') : (es ? 'Repasa y vuelve a intentarlo.' : 'Review and try again.')}</h2>
+        <label for="nm">${es ? 'Tu nombre (se queda en este dispositivo)' : 'Your name (stays on this device)'}</label>
+        <input type="text" id="nm" value="${esc(S.name)}" autocomplete="name">
+        <div class="row"><button class="btn alt" id="retry">${es ? 'Intentar de nuevo' : 'Try again'}</button></div>
+      </div>` : ''}
+      ${QUIZ.map((q, i) => `<div><p class="eyebrow">${es ? 'Situación' : 'Situation'} ${i + 1}</p>${question(q, i, S.quiz)}</div>`).join('')}
+    </section>`;
+  },
+  glosario() {
+    const es = S.lang === 'es';
+    return `<section class="section">
+      <p class="eyebrow">${es ? 'Apoyo' : 'Support'}</p>
+      <h1 class="h2">${es ? 'Glosario inglés–español' : 'English–Spanish glossary'}</h1>
+      <p class="lead">${es ? 'Los términos que aparecen en etiquetas, manuales y reuniones del sitio.' : 'Terms that appear on labels, manuals and site meetings.'}</p>
+      <div class="gloss">${GLOSS.map(g => `<div class="term"><span class="en">${g.en}</span><span class="es">${g.es}</span><span class="d">${F(g, 'd')}</span></div>`).join('')}</div>
+      <h2 class="h2">${es ? 'Cómo está diseñado este módulo' : 'How this module is designed'}</h2>
+      <p class="lead">${es ? 'Sigue el Diseño Universal para el Aprendizaje (DUA) y la andragogía: cada persona elige cómo recibir la información, cómo participar y cómo demostrar lo que sabe.' : 'It follows Universal Design for Learning (UDL) and andragogy: each person chooses how to take in information, how to engage and how to show what they know.'}</p>
+      <div class="udl">
+        <div><b>${es ? 'Representación' : 'Representation'}</b><p>${es ? 'Español o inglés, escuchar en voz alta, texto grande, alto contraste, íconos y glosario.' : 'Spanish or English, read aloud, large text, high contrast, icons and glossary.'}</p></div>
+        <div><b>${es ? 'Acción y expresión' : 'Action & expression'}</b><p>${es ? 'Listas que se tocan, preguntas con opciones, discusión en grupo y demostración práctica en campo.' : 'Tap-through checklists, multiple-choice questions, group discussion and hands-on field demonstration.'}</p></div>
+        <div><b>${es ? 'Compromiso' : 'Engagement'}</b><p>${es ? 'Caso real del sitio, elegir por dónde empezar, retroalimentación inmediata y su experiencia como punto de partida.' : 'A real site case, choosing where to start, immediate feedback and their own experience as the starting point.'}</p></div>
+      </div>
+    </section>`;
+  }
+};
+
+function renderNav() {
+  const done = id => S.visited[id] && (id !== 'evaluacion' || Object.keys(S.quiz).length === QUIZ.length);
+  document.getElementById('route').innerHTML = T.nav.map((n, i) => `<li><button data-go="${n.id}" class="${done(n.id) ? 'done' : ''}" ${n.id === current ? 'aria-current="step"' : ''}><span class="num">${({inicio: '·', evaluacion: 'E', glosario: '?'})[n.id] || i}</span>${L(n)}</button></li>`).join('');
+  const pct = ids.filter(done).length / ids.length * 100;
+  document.getElementById('bar').style.width = pct + '%';
+}
+function render(focus) {
+  dailyReset();
+  document.documentElement.lang = S.lang;
+  document.documentElement.dataset.size = S.size ? 'large' : '';
+  document.documentElement.dataset.contrast = S.contrast ? 'high' : '';
+  document.getElementById('b-es').setAttribute('aria-pressed', S.lang === 'es');
+  document.getElementById('b-en').setAttribute('aria-pressed', S.lang === 'en');
+  document.getElementById('b-size').setAttribute('aria-pressed', S.size);
+  document.getElementById('b-contrast').setAttribute('aria-pressed', S.contrast);
+  document.getElementById('t-contrast').textContent = L(T.ui.contrast);
+  document.getElementById('t-listen').textContent = speaking ? L(T.ui.stop) : L(T.ui.listen);
+  S.visited[current] = true;
+  const i = ids.indexOf(current);
+  const main = document.getElementById('main');
+  main.innerHTML = VIEWS[current]() + `<div class="pager">
+    ${i > 0 ? `<button class="btn alt" data-go="${ids[i - 1]}">← ${L(T.ui.prev)}</button>` : '<span></span>'}
+    ${i < ids.length - 1 ? `<button class="btn go" data-go="${ids[i + 1]}">${L(T.ui.next)}: ${L(T.nav[i + 1])} →</button>` : ''}
+  </div>`;
+  renderNav();
+  save();
+  if (focus) { main.focus({preventScroll: true}); window.scrollTo({top: 0}); }
+}
+function go(id) {
+  stopSpeak();
+  current = id;
+  if (location.hash.slice(1) !== id) location.hash = id;
+  render(true);
+}
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (ids.includes(h) && h !== current) { current = h; stopSpeak(); render(true); } });
+
+/* Read aloud */
+let speaking = false;
+const canSpeak = 'speechSynthesis' in window;
+if (!canSpeak) document.getElementById('b-listen').hidden = true;
+function stopSpeak() { if (canSpeak) { try { speechSynthesis.cancel(); } catch (e) {} } speaking = false; const t = document.getElementById('t-listen'); if (t) t.textContent = L(T.ui.listen); }
+function speak() {
+  if (!canSpeak) return;
+  if (speaking) { stopSpeak(); return; }
+  try {
+    const text = document.querySelector('#main .section').innerText.replace(/\s+\n/g, '\n');
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = S.lang === 'es' ? 'es-MX' : 'en-US';
+    u.rate = 0.95;
+    const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith(S.lang));
+    if (v) u.voice = v;
+    u.onend = u.onerror = () => stopSpeak();
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+    speaking = true;
+    document.getElementById('t-listen').textContent = L(T.ui.stop);
+  } catch (e) { stopSpeak(); }
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.v) return vControl(b);
+  if (b.dataset.go) { vPause(); return go(b.dataset.go); }
+  if (b.dataset.lang) { stopSpeak(); vPause(); S.lang = b.dataset.lang; return render(); }
+  if (b.id === 'b-listen') { vPause(); return speak(); }
+  if (b.id === 'b-size') { S.size = !S.size; return render(); }
+  if (b.id === 'b-contrast') { S.contrast = !S.contrast; return render(); }
+  if (b.dataset.task) { if (S.task !== b.dataset.task) { delete S.sign.start; S.task = b.dataset.task; S.game = freshGame(S.task); } return render(); }
+  if (b.dataset.gstart) { S.game = freshGame(S.task); S.game.start = Date.now(); return render(); }
+  if (b.dataset.item) { if (!S.game.start) S.game.start = Date.now(); S.game.pending = b.dataset.item; return render(); }
+  if (b.dataset.gno) { S.game.pending = null; return render(); }
+  if (b.dataset.gyes) {
+    const G = S.game;
+    G.placed[b.dataset.gyes] = true; G.last = b.dataset.gyes; G.pending = null;
+    if (need().every(p => G.placed[p.k])) {
+      G.end = Date.now();
+      const secs = (G.end - G.start) / 1000;
+      G.record = !S.best[S.task] || secs < S.best[S.task];
+      if (G.record) S.best[S.task] = secs;
+      const k = todayKey();
+      S.ppeLog[k] = S.ppeLog[k] || {};
+      S.ppeLog[k][S.task] = {secs, at: G.end};
+    }
+    return render();
+  }
+  if (b.dataset.greset) { S.game = freshGame(S.task); return render(); }
+  if (b.dataset.pitem) { pack(b.dataset.pitem).pending = b.dataset.k; return render(); }
+  if (b.dataset.pno) { pack(b.dataset.pno).pending = null; return render(); }
+  if (b.dataset.pyes) {
+    const id = b.dataset.pyes, P = pack(id), items = PACKS[id];
+    P.placed[b.dataset.k] = true; P.last = b.dataset.k; P.pending = null;
+    if (items.every(x => P.placed[x.k])) packLog(id)[todayKey()] = Date.now();
+    return render();
+  }
+  if (b.dataset.crewmode) { S.crew.mode = b.dataset.crewmode; return render(); }
+  if (b.dataset.water) { dayState().water.push(Date.now()); return render(); }
+  if (b.dataset.brk) { dayState().breaks.push(Date.now()); return render(); }
+  if (b.dataset.meal) { const d = dayState(); d.meal = d.meal ? 0 : Date.now(); return render(); }
+  if (b.id === 'rep-copy') {
+    const ta = document.getElementById('rep-text'), msg = document.getElementById('rep-msg');
+    const fallback = () => { ta.focus(); ta.select(); msg.textContent = S.lang === 'es' ? 'Texto seleccionado: cópialo con Ctrl+C o mantén presionado.' : 'Text selected: copy with Ctrl+C or long-press.'; };
+    try { navigator.clipboard.writeText(ta.value).then(() => { msg.textContent = S.lang === 'es' ? 'Copiado. Pégalo en el correo o mensaje.' : 'Copied. Paste it into the email or message.'; }, fallback); } catch (err) { fallback(); }
+    return;
+  }
+  if (b.dataset.check) { const st = S[b.dataset.check]; st[b.dataset.i] = !st[b.dataset.i]; if (!st[b.dataset.i]) delete S.sign[b.dataset.check]; return render(); }
+  if (b.dataset.tool) { S.tool = b.dataset.tool; return render(); }
+  if (b.dataset.q !== undefined) {
+    const id = b.dataset.q, i = Number(b.dataset.i);
+    if (current === 'evaluacion') S.quiz[id] = i; else S.qc[id] = i;
+    return render();
+  }
+  if (b.id === 'retry') { S.quiz = {}; return render(true); }
+  if (b.dataset.sign) {
+    const st = b.dataset.sign, d = S.signDraft[st] || {name: '', role: 0};
+    if (!d.name.trim()) { document.getElementById('sign-msg-' + st).textContent = S.lang === 'es' ? 'Escribe el nombre del encargado.' : 'Enter the name of the person in charge.'; document.getElementById('enc-' + st).focus(); return; }
+    S.sign[st] = {name: d.name.trim(), role: Number(d.role), at: Date.now()};
+    return render();
+  }
+  if (b.dataset.unsign) { delete S.sign[b.dataset.unsign]; return render(); }
+});
+const draft = st => (S.signDraft[st] = S.signDraft[st] || {name: '', role: 0});
+document.addEventListener('input', e => {
+  if (e.target.id === 'nm') { S.name = e.target.value; save(); }
+  if (e.target.dataset.draft) { draft(e.target.dataset.draft).name = e.target.value; save(); }
+  if (e.target.dataset.crew) { S.crew.names = e.target.value; save(); }
+  if (e.target.dataset.rep) { S.rep[e.target.dataset.rep] = e.target.value; save(); const o = document.getElementById('rep-out'); if (o) o.innerHTML = repOut(); }
+});
+document.addEventListener('change', e => {
+  if (e.target.dataset && e.target.dataset.repc) { S.rep[e.target.dataset.repc] = e.target.checked; save(); const o = document.getElementById('rep-out'); if (o) o.innerHTML = repOut(); }
+});
+document.addEventListener('input', e => { if (e.target.dataset.crew) { const t = document.getElementById('turnbox'); if (t) t.innerHTML = turnHTML(); } });
+document.addEventListener('change', e => { if (e.target.dataset.draftrole) { draft(e.target.dataset.draftrole).role = Number(e.target.value); save(); } });
+
+setInterval(() => { const w = document.getElementById('waterbox'); if (w) w.innerHTML = waterHTML(); }, 30000);
+setInterval(() => {
+  const el = document.getElementById('gtime');
+  if (el && S.game.start && !S.game.end) el.textContent = fmt((Date.now() - S.game.start) / 1000);
+}, 100);
+render();
+</script>
+
+</body>
+</html>
