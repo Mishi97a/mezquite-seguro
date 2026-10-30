@@ -369,6 +369,7 @@ const ICON = {
   hat: '<path d="M6 14a6 6 0 0 1 12 0"/><path d="M2 15c3 2.2 17 2.2 20 0"/><path d="M12 8v3"/>',
   radio: '<rect x="7" y="7" width="10" height="15" rx="2"/><path d="M14 7V2"/><path d="M9.5 11h5M9.5 14h5"/>',
   pants: '<path d="M6 3h12l1 18h-5l-2-11-2 11H5z"/>',
+  ears: '<path d="M5 13a7 7 0 0 1 14 0"/><rect x="3" y="12" width="4" height="7" rx="2"/><rect x="17" y="12" width="4" height="7" rx="2"/>',
   gaiter: '<path d="M7 2h7v12l6 3v4H5v-7l2-1z"/><path d="M7 5h7M7 8.5h7M7 12h7"/><path d="M2 21c1.5-2 3-2 4.5 0"/>',
   vest: '<path d="M8 3 5 6v15h5V9M16 3l3 3v15h-5V9M8 3l4 5 4-5"/><path d="M5 14h5M14 14h5"/>'
 };
@@ -395,22 +396,23 @@ const T = {
   }
 };
 
-const ALL = ['saw', 'cut', 'herb'];
+const ALL = ['cut', 'mtl', 'aer', 'herb'];
+const MACH = ['cut', 'mtl', 'aer'];
 const PPE = [
   {k:'shirt', icon:'shirt', es:'Camisa de manga larga', en:'Long-sleeve shirt', need:ALL, cEs:'Limpia, sin químico de ayer.', cEn:'Clean, no chemical from yesterday.'},
   {k:'pants', icon:'pants', es:'Pantalón largo', en:'Long pants', need:ALL, cEs:'Sin roturas.', cEn:'No tears.'},
   {k:'boots', icon:'boots', es:'Botas con casquillo', en:'Steel-toe boots', need:ALL, cEs:'Suela en buen estado; impermeables si aplicas herbicida.', cEn:'Soles in good shape; waterproof if applying herbicide.'},
-  {k:'snake', icon:'gaiter', es:'Polainas contra serpientes', en:'Snake chaps', need:ALL, cEs:'Cubren de tobillo a rodilla, sin roturas.', cEn:'Cover ankle to knee, no tears.'},
-  {k:'chaps', icon:'chaps', es:'Chaparreras anticorte', en:'Chainsaw chaps', need:['saw'], cEs:'Sin cortes ni fibras expuestas.', cEn:'No cuts or exposed fibers.'},
+  {k:'snake', icon:'gaiter', es:'Snake chaps', en:'Snake chaps', need:ALL, cEs:'Cubren de tobillo a rodilla, sin roturas.', cEn:'Cover ankle to knee, no tears.'},
   {k:'vest', icon:'vest', es:'Chaleco de alta visibilidad', en:'High-visibility vest', need:ALL, cEs:'Limpio y visible para operadores.', cEn:'Clean and visible to operators.'},
   {k:'radio', icon:'radio', es:'Radio', en:'Radio', need:ALL, cEs:'Batería cargada y en el canal de la cuadrilla.', cEn:'Battery charged, on the crew channel.'},
-  {k:'leather', icon:'glove', es:'Guantes de cuero', en:'Leather gloves', need:['saw', 'cut'], cEs:'Sin hoyos.', cEn:'No holes.'},
+  {k:'leather', icon:'glove', es:'Guantes de cuero', en:'Leather gloves', need:MACH, cEs:'Sin hoyos.', cEn:'No holes.'},
   {k:'chem', icon:'chem', es:'Guantes resistentes a químicos', en:'Chemical-resistant gloves', need:['herb'], cEs:'Sin perforaciones; manga por fuera del guante.', cEn:'No punctures; sleeve over the glove.'},
   {k:'glasses', icon:'glasses', es:'Lentes de seguridad', en:'Safety glasses', need:ALL, cEs:'ANSI Z87.1, limpios, sin rayones.', cEn:'ANSI Z87.1, clean, no scratches.'},
-  {k:'screen', icon:'helmet', es:'Careta de malla y protección auditiva', en:'Mesh face screen and hearing protection', need:['saw', 'cut'], cEs:'Careta fija, orejeras completas.', cEn:'Screen secure, earmuffs complete.'},
+  {k:'ears', icon:'ears', es:'Protección auditiva', en:'Hearing protection', need:MACH, cEs:'Orejeras completas o tapones limpios.', cEn:'Earmuffs complete or clean earplugs.'},
+  {k:'screen', icon:'helmet', es:'Careta de malla', en:'Mesh face screen', need:['cut'], cEs:'Careta fija, sin roturas.', cEn:'Screen secure, no tears.'},
   {k:'hat', icon:'hat', es:'Casco con ala para sombra', en:'Hard hat with sun brim', need:ALL, cEs:'Sin grietas, suspensión ajustada.', cEn:'No cracks, suspension adjusted.'}
 ];
-const TASKS = [{k:'saw',es:'Motosierra',en:'Chainsaw'},{k:'cut',es:'Desbrozadora',en:'Brush cutter'},{k:'herb',es:'Herbicida',en:'Herbicide'}];
+const TASKS = [{k:'cut',es:'Desbrozadora',en:'Brush cutter'},{k:'mtl',es:'Minicargador',en:'Track loader'},{k:'aer',es:'Aireadora',en:'Aerator'},{k:'herb',es:'Herbicida',en:'Herbicide'}];
 
 const START = [
   {es:'Charla de seguridad de 5 minutos realizada', en:'5-minute safety talk held'},
@@ -430,21 +432,6 @@ const START = [
 ];
 
 const TOOLS = [
-  {k:'saw', es:'Motosierra', en:'Chainsaw',
-   steps:[
-    {bEs:'Revisar', bEn:'Check', es:'Cadena afilada y tensada, freno de cadena, captor de cadena, seguro del gatillo, sin fugas.', en:'Sharp, tensioned chain, chain brake, chain catcher, throttle lockout, no leaks.'},
-    {bEs:'Cargar combustible', bEn:'Refuel', es:'Motor frío, a 3 m (10 ft) del lugar de arranque y lejos de paneles.', en:'Engine cool, 3 m (10 ft) from the starting spot and away from panels.'},
-    {bEs:'Arrancar', bEn:'Start', es:'En el suelo, con el freno de cadena activado. Nunca al aire.', en:'On the ground, chain brake on. Never drop-start.'},
-    {bEs:'Operar', bEn:'Operate', es:'Dos manos, pulgar envolviendo la manija, cuerpo fuera de la línea de la cadena. No cortar con la punta.', en:'Both hands, thumb wrapped, body out of the chain line. Never cut with the tip.'},
-    {bEs:'Cerca de paneles', bEn:'Near panels', es:'Caída planeada lejos del panel, cortes por secciones, vigía confirma zona libre.', en:'Fall planned away from the panel, sectional cuts, spotter confirms clear zone.'}
-   ],
-   ruleEs:'Si no sé hacia dónde va a caer, no corto.', ruleEn:"If I don't know where it will fall, I don't cut.",
-   expEs:'¿Qué señales te dicen que un mezquite va a caer hacia donde no quieres?', expEn:'What signs tell you a mesquite will fall where you don’t want it to?',
-   q:{es:'¿Dónde se arranca la motosierra?', en:'Where do you start the chainsaw?', o:[
-     {es:'Dejándola caer mientras jalas la cuerda', en:'Dropping it while pulling the cord'},
-     {es:'En el suelo, con el freno de cadena activado', en:'On the ground with the chain brake on'},
-     {es:'Sobre la caja de la camioneta', en:'On the truck bed'}], a:1,
-     wEs:'En el suelo y con freno: si la cadena gira al arrancar, no alcanza a nadie.', wEn:'On the ground with the brake on: if the chain moves at start, it reaches no one.'}},
   {k:'cut', es:'Desbrozadora', en:'Brush cutter',
    steps:[
     {bEs:'Revisar la cuchilla', bEn:'Check the blade', es:'Cuchilla de sierra afilada, sin grietas ni dientes doblados o faltantes. Protector metálico de cuchilla correcto para ese disco. Tuerca, copa y arandela apretadas.', en:'Saw blade sharp, no cracks, no bent or missing teeth. Correct metal blade guard for that blade. Nut, cup and washer tight.'},
@@ -452,7 +439,7 @@ const TOOLS = [
     {bEs:'Combustible', bEn:'Fuel', es:'Mezcla de gasolina y aceite de 2 tiempos en la proporción del manual. Motor frío, a 3 m (10 ft) del lugar de arranque y lejos de paneles.', en:'Gas and 2-stroke oil at the ratio in the manual. Engine cool, 3 m (10 ft) from the starting spot and away from panels.'},
     {bEs:'Despejar y zona de exclusión', bEn:'Clear and exclusion zone', es:'Retirar piedras y alambres. Nadie a menos de 15 m (50 ft); si un panel queda dentro, barrera o herramienta manual.', en:'Remove rocks and wire. No one within 15 m (50 ft); if a panel is inside it, barrier or hand tool.'},
     {bEs:'Arrancar', bEn:'Start', es:'Apoyada en el suelo, con la cuchilla sin tocar nada.', en:'Resting on the ground, blade touching nothing.'},
-    {bEs:'Cortar', bEn:'Cut', es:'Acelerador a fondo antes de tocar la madera. Cortar con el lado izquierdo-frontal de la cuchilla. Nunca con la zona entre las 12 y las 3 del reloj: ahí la cuchilla rebota con fuerza (empuje de cuchilla). Tallos gruesos van con motosierra.', en:'Full throttle before touching wood. Cut with the left-front of the blade. Never with the 12 to 3 o’clock zone: the blade thrusts hard there (blade thrust). Thick stems go to the chainsaw.'},
+    {bEs:'Cortar', bEn:'Cut', es:'Acelerador a fondo antes de tocar la madera. Cortar con el lado izquierdo-frontal de la cuchilla. Nunca con la zona entre las 12 y las 3 del reloj: ahí la cuchilla rebota con fuerza (empuje de cuchilla). Tallos gruesos: no forzar la cuchilla; avisar al supervisor.', en:'Full throttle before touching wood. Cut with the left-front of the blade. Never with the 12 to 3 o’clock zone: the blade thrusts hard there (blade thrust). Thick stems: don’t force the blade; tell the supervisor.'},
     {bEs:'Detener y transportar', bEn:'Stop and carry', es:'Soltar el acelerador y esperar a que la cuchilla pare. Moverse y transportar con el motor apagado y la cubierta de la cuchilla puesta.', en:'Release the throttle and wait for the blade to stop. Move and carry with the engine off and the blade cover on.'}
    ],
    ruleEs:'Si no sé hacia dónde va a volar, no corto.', ruleEn:"If I don't know where it will fly, I don't cut.",
@@ -462,19 +449,21 @@ const TOOLS = [
      {es:'Corto con cuidado y despacio', en:'Cut carefully and slowly'},
      {es:'Le pido a mi compañero que vigile y sigo', en:'Ask my partner to watch and keep going'}], a:0,
      wEs:'8 m está dentro de la zona de 15 m: la piedra no sabe que vas despacio.', wEn:'8 m is inside the 15 m zone: a rock doesn’t know you are going slowly.'}},
-  {k:'hand', es:'Herramientas manuales', en:'Hand tools',
+  {k:'hand', es:'Tijeras de poda', en:'Pruning shears',
    steps:[
-    {bEs:'Revisar', bEn:'Check', es:'Filo, mangos y tornillos firmes. Machete siempre en funda al caminar.', en:'Edge, handles and bolts firm. Machete always sheathed while walking.'},
-    {bEs:'Sujetar', bEn:'Hold', es:'Sujetar la rama y cortar del lado opuesto al panel.', en:'Hold the branch and cut from the side opposite the panel.'},
-    {bEs:'Distancia', bEn:'Distance', es:'Un brazo más la herramienta lejos del panel y de otras personas.', en:'One arm plus the tool away from the panel and other people.'}
+    {bEs:'Revisar', bEn:'Check', es:'Hojas afiladas y sin mellas, tornillo central apretado, mangos firmes, seguro funcionando.', en:'Blades sharp with no nicks, center bolt tight, firm handles, lock working.'},
+    {bEs:'Cortar', bEn:'Cut', es:'Usar la parte de la hoja cercana al tornillo. Si la rama es muy gruesa para la tijera, no forzarla.', en:'Cut near the pivot. If the branch is too thick for the shears, don’t force it.'},
+    {bEs:'Sujetar', bEn:'Hold', es:'Sujetar la rama y cortar del lado opuesto al panel; la otra mano lejos de las hojas.', en:'Hold the branch and cut from the side opposite the panel; other hand away from the blades.'},
+    {bEs:'Distancia', bEn:'Distance', es:'Un brazo más la tijera lejos del panel, de los cables y de otras personas.', en:'One arm plus the shears away from the panel, cables and other people.'},
+    {bEs:'Guardar', bEn:'Store', es:'Al caminar y al terminar: tijera cerrada con el seguro puesto. Limpiar la savia y aceitar el tornillo al final del día.', en:'When walking and when done: shears closed with the lock on. Clean sap and oil the pivot at day’s end.'}
    ],
    ruleEs:'Ramas hacia afuera, nunca hacia el panel.', ruleEn:'Branches out, never toward the panel.',
    expEs:'¿Qué truco usas para que una rama con tensión no salte?', expEn:'What trick do you use so a tensioned branch doesn’t spring back?',
-   q:{es:'¿Cómo llevas el machete al caminar entre filas?', en:'How do you carry the machete between rows?', o:[
-     {es:'En la mano, listo para usar', en:'In hand, ready to use'},
-     {es:'Colgado del cinturón sin funda', en:'Hanging from the belt, unsheathed'},
-     {es:'En su funda', en:'In its sheath'}], a:2,
-     wEs:'Con funda no hay golpe accidental a una persona, al vidrio ni a un cable.', wEn:'Sheathed means no accidental strike on a person, glass or cable.'}},
+   q:{es:'¿Cómo llevas la tijera de poda al caminar entre filas?', en:'How do you carry the pruning shears between rows?', o:[
+     {es:'Abierta, lista para usar', en:'Open, ready to use'},
+     {es:'Colgada del cinturón, abierta', en:'Hanging from the belt, open'},
+     {es:'Cerrada y con el seguro puesto', en:'Closed with the lock on'}], a:2,
+     wEs:'Cerrada y con seguro no hay corte accidental a una persona ni golpe a un panel o cable.', wEn:'Closed and locked means no accidental cut to a person and no strike on a panel or cable.'}},
   {k:'herb', es:'Herbicida', en:'Herbicide',
    steps:[
     {bEs:'Revisar', bEn:'Check', es:'Mochila sin fugas, manguera y válvula en buen estado, boquilla correcta.', en:'No leaks, hose and valve in good shape, correct nozzle.'},
@@ -650,11 +639,11 @@ const CONTACT = [
 ];
 
 const QUIZ = [
-  {es:'El mezquite está inclinado hacia un panel y no hay otra dirección de caída.', en:'The mesquite leans toward a panel and there is no other felling direction.', o:[
-    {es:'Detengo, aviso al supervisor y corto por secciones con cuerda', en:'Stop, tell the supervisor, and cut in sections with a rope'},
-    {es:'Corto el tronco desde la base rápido', en:'Cut the trunk at the base quickly'},
-    {es:'Lo dejo para el final del día', en:'Leave it for the end of the day'}], a:0,
-   wEs:'Cuando la caída natural apunta al panel, se planea con el supervisor y se baja por partes.', wEn:'When the natural fall points at the panel, plan with the supervisor and take it down in parts.'},
+  {es:'Vas a cortar un tallo de mezquite con la desbrozadora. ¿Con qué parte de la cuchilla cortas?', en:'You are cutting a mesquite stem with the brush cutter. Which part of the blade do you cut with?', o:[
+    {es:'Con la zona de enfrente, entre las 12 y las 3 del reloj', en:'With the front, between 12 and 3 o’clock'},
+    {es:'Con cualquier parte, si acelero a fondo', en:'Any part, if I give it full throttle'},
+    {es:'Con el lado izquierdo-frontal de la cuchilla', en:'With the left-front of the blade'}], a:2,
+   wEs:'Entre las 12 y las 3 la cuchilla rebota con fuerza (empuje de cuchilla) y puede lanzar la máquina hacia ti o hacia un panel.', wEn:'Between 12 and 3 the blade thrusts hard and can throw the machine toward you or a panel.'},
   {es:'Vas con el minicargador dentro de una fila y necesitas regresar.', en:'You are in a row with the track loader and need to go back.', o:[
     {es:'Giro sobre mi eje, despacio', en:'Pivot in place, slowly'},
     {es:'Sigo recto hasta el pasillo y giro ahí', en:'Go straight to the aisle and turn there'},
@@ -700,11 +689,12 @@ const QUIZ = [
 const GLOSS = [
   {en:'PPE', es:'Equipo de protección personal', dEs:'En el sitio usamos el término en inglés: PPE.', dEn:'Personal protective equipment.'},
   {en:'Spotter', es:'Vigía', dEs:'Persona que vigila la zona y puede detener el trabajo.', dEn:'Person who watches the zone and can stop work.'},
-  {en:'Kickback', es:'Rebote', dEs:'Salto brusco de la motosierra hacia el operador al tocar con la punta.', dEn:'Sudden jump of the saw toward the operator when the tip touches.'},
+  {en:'Blade thrust', es:'Empuje de cuchilla', dEs:'Salto brusco de la desbrozadora cuando la zona de las 12 a las 3 de la cuchilla toca algo sólido.', dEn:'Sudden jump of the brush cutter when the 12-to-3 o’clock zone of the blade hits something solid.'},
+  {en:'Tail swing', es:'Giro de cola', dEs:'Barrido de la parte trasera de una máquina hacia el lado contrario al girar.', dEn:'The rear of a machine sweeping the opposite way when it turns.'},
   {en:'Exclusion zone', es:'Zona de exclusión', dEs:'Área donde nadie ni nada frágil puede estar mientras se corta.', dEn:'Area where no people or fragile equipment may be during cutting.'},
   {en:'Cut stump', es:'Tratamiento de tocón', dEs:'Herbicida aplicado al anillo exterior del corte.', dEn:'Herbicide applied to the outer ring of the cut.'},
   {en:'Basal bark', es:'Tratamiento basal', dEs:'Herbicida aplicado a la corteza de la base del tallo.', dEn:'Herbicide applied to the bark at the base of the stem.'},
-  {en:'Snake gaiters', es:'Polainas contra serpientes', dEs:'Protección de tobillo a rodilla contra mordeduras.', dEn:'Ankle-to-knee protection against bites.'},
+  {en:'Snake chaps', es:'Snake chaps', dEs:'Protección de tobillo a rodilla contra mordeduras de serpiente. En el sitio se usa el nombre en inglés.', dEn:'Ankle-to-knee protection against snakebites.'},
   {en:'Drift', es:'Deriva', dEs:'Rocío que el viento lleva fuera del objetivo.', dEn:'Spray carried off target by wind.'},
   {en:'SDS', es:'Hoja de seguridad', dEs:'Documento con riesgos y primeros auxilios del producto.', dEn:'Document with the product’s hazards and first aid.'},
   {en:'REI', es:'Intervalo de reingreso', dEs:'Tiempo antes de volver a entrar sin PPE a un área tratada.', dEn:'Time before re-entering a treated area without PPE.'},
@@ -715,8 +705,10 @@ const GLOSS = [
 
 /* State */
 const KEY = 'mezquite-seguro-v2';
-let S = {lang:'es', size:false, contrast:false, task:'saw', tool:'saw', start:{}, leave:{}, qc:{}, quiz:{}, visited:{}, name:'', sign:{}, signDraft:{}, game:{task:'saw', start:0, end:0, placed:{}, pending:null, last:null}, ppeLog:{}, best:{}, packs:{}, packLog:{}, crew:{names:'', mode:'day'}, rep:{}, day:null, during:{}, formsDay:'', near:{}, nearLog:[]};
+let S = {lang:'es', size:false, contrast:false, task:'cut', tool:'cut', start:{}, leave:{}, qc:{}, quiz:{}, visited:{}, name:'', sign:{}, signDraft:{}, game:{task:'cut', start:0, end:0, placed:{}, pending:null, last:null}, ppeLog:{}, best:{}, packs:{}, packLog:{}, crew:{names:'', mode:'day'}, rep:{}, day:null, during:{}, formsDay:'', near:{}, nearLog:[]};
 try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) S = Object.assign(S, saved); } catch (e) {}
+if (!TASKS.some(t => t.k === S.task)) S.task = 'cut';
+if (!TOOLS.some(t => t.k === S.tool)) S.tool = 'cut';
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 const L = o => o[S.lang];
 const F = (o, base) => o[base + (S.lang === 'es' ? 'Es' : 'En')];
@@ -772,7 +764,6 @@ function sceneSVG(c) {
   return s + '</svg>';
 }
 const FIG = {
-  saw: {tree:1, fall:1, worker:'saw', wx:84, alt:{es:'Operador con motosierra y caída planeada lejos de los paneles', en:'Chainsaw operator with the fall planned away from the panels'}, cap:{es:'La dirección de caída se planea antes de arrancar, siempre lejos del panel.', en:'The felling direction is planned before starting, always away from the panel.'}},
   cut: {zone:1, barrier:1, worker:'cut', alt:{es:'Desbrozadora con zona de exclusión y barrera frente al panel', en:'Brush cutter with exclusion zone and barrier in front of the panel'}, cap:{es:'Si el panel queda dentro de la zona de 15 m, va una barrera o se cambia de herramienta.', en:'If the panel is inside the 15 m zone, add a barrier or switch tools.'}},
   hand: {tree:1, worker:'none', wx:110, alt:{es:'Trabajador con herramienta manual junto a un mezquite', en:'Worker with a hand tool next to a mesquite'}, cap:{es:'Sujetar la rama y cortar del lado opuesto al panel.', en:'Hold the branch and cut from the side opposite the panel.'}},
   herb: {stump:1, worker:'spray', wx:110, target:180, alt:{es:'Aplicación de herbicida al anillo exterior de un tocón', en:'Herbicide applied to the outer ring of a stump'}, cap:{es:'El producto va al anillo exterior del tocón, con chorro dirigido y lejos de los paneles.', en:'Product goes on the stump’s outer ring, directed stream, away from the panels.'}},
@@ -808,12 +799,12 @@ function figure(k) {
 /* Intro video: animated scenes + narration + captions */
 const SCENES = [
   {c:{tree:1}, title:1, es:'Bienvenidos a Mezquite Seguro, el entrenamiento para cortar mezquite y aplicar herbicida junto a paneles solares.', en:'Welcome to Mezquite Seguro, the training for cutting mesquite and applying herbicide next to solar panels.'},
-  {c:{tree:1, worker:'saw', wx:84}, es:'Ustedes ya saben cortar mezquite. Su experiencia es el punto de partida de este módulo.', en:'You already know how to cut mesquite. Your experience is the starting point of this module.'},
+  {c:{tree:1, worker:'cut', wx:84}, es:'Ustedes ya saben cortar mezquite. Su experiencia es el punto de partida de este módulo.', en:'You already know how to cut mesquite. Your experience is the starting point of this module.'},
   {c:{crack:1, tape:1}, es:'En un incidente real, un minicargador con desbrozadora giró dentro de una fila y su parte trasera rozó un panel. No hubo lesionados. No buscamos culpables: buscamos controles.', en:'In a real incident, a track loader with a brush cutter turned inside a row and its rear grazed a panel. No one was hurt. We are not looking for blame: we are looking for controls.'},
   {c:{zone:1, barrier:1, worker:'cut'}, es:'Antes de cada corte: planear la caída, marcar la zona de exclusión y poner barrera si el panel queda cerca.', en:'Before every cut: plan the fall, mark the exclusion zone, and add a barrier if the panel is close.'},
   {c:{stump:1, worker:'spray', wx:110, target:180}, es:'Con herbicida: sin etiqueta leída, no hay mezcla. Se aplica al anillo exterior del tocón.', en:'With herbicide: no label read, no mix. It goes on the outer ring of the stump.'},
   {c:{truck:1, spotter:1}, es:'Con maquinaria y vehículos: recto dentro de la fila y giro solo en el pasillo. Si no veo, me bajo y reviso.', en:'With machines and vehicles: straight inside the row, turn only in the aisle. If I can’t see, I get out and look.'},
-  {c:{tree:1, fall:1}, end:1, es:'La meta es cero paneles dañados y cero lesiones. Empecemos con la lista inicial y el equipo de protección.', en:'The goal is zero damaged panels and zero injuries. Let’s start with the start checklist and protective equipment.'}
+  {c:{tree:1}, end:1, es:'La meta es cero paneles dañados y cero lesiones. Empecemos con la lista inicial y el equipo de protección.', en:'The goal is zero damaged panels and zero injuries. Let’s start with the start checklist and protective equipment.'}
 ];
 const V = {i:0, playing:false, voice:true, cc:true, timer:0, tok:0, started:false};
 const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>';
@@ -1008,7 +999,8 @@ function avatar(p, last, label) {
   s += g('leather', `<circle cx="61" cy="237" r="13" fill="#8A5A33"/><rect x="50" y="218" width="22" height="10" rx="3" fill="#6E4524"/><circle cx="179" cy="237" r="13" fill="#8A5A33"/><rect x="168" y="218" width="22" height="10" rx="3" fill="#6E4524"/>`);
   s += g('chem', `<circle cx="61" cy="237" r="13" fill="#2E8C7E"/><rect x="49" y="208" width="24" height="18" rx="3" fill="#25736A"/><circle cx="179" cy="237" r="13" fill="#2E8C7E"/><rect x="167" y="208" width="24" height="18" rx="3" fill="#25736A"/>`);
   s += g('glasses', `<rect x="102" y="62" width="15" height="11" rx="3" fill="#BFE3F5" fill-opacity=".65" stroke="${ink}" stroke-width="2"/><rect x="123" y="62" width="15" height="11" rx="3" fill="#BFE3F5" fill-opacity=".65" stroke="${ink}" stroke-width="2"/><path d="M117 67h6" stroke="${ink}" stroke-width="2"/>`);
-  s += g('screen', `<path d="M92 58a28 28 0 0 1 56 0" stroke="var(--orange)" stroke-width="5" fill="none"/><rect x="86" y="58" width="12" height="22" rx="5" fill="var(--orange)"/><rect x="142" y="58" width="12" height="22" rx="5" fill="var(--orange)"/><rect x="99" y="52" width="42" height="40" rx="6" fill="${ink}" fill-opacity=".12" stroke="#3A454C" stroke-width="2"/><path d="M106 52v40M113 52v40M120 52v40M127 52v40M134 52v40M99 62h42M99 72h42M99 82h42" stroke="#3A454C" stroke-width="1" opacity=".5"/>`);
+  s += g('ears', `<path d="M92 58a28 28 0 0 1 56 0" stroke="var(--orange)" stroke-width="5" fill="none"/><rect x="86" y="58" width="12" height="22" rx="5" fill="var(--orange)"/><rect x="142" y="58" width="12" height="22" rx="5" fill="var(--orange)"/>`);
+  s += g('screen', `<rect x="99" y="52" width="42" height="40" rx="6" fill="${ink}" fill-opacity=".12" stroke="#3A454C" stroke-width="2"/><path d="M106 52v40M113 52v40M120 52v40M127 52v40M134 52v40M99 62h42M99 72h42M99 82h42" stroke="#3A454C" stroke-width="1" opacity=".5"/>`);
   s += g('hat', `<ellipse cx="120" cy="49" rx="52" ry="9" fill="#C9A66B"/><path d="M94 49a26 24 0 0 1 52 0z" fill="#F2C230"/><path d="M120 26v22" stroke="#D9A91E" stroke-width="3"/>`);
   return s + '</svg>';
 }
@@ -1078,8 +1070,8 @@ function gameHTML() {
 }
 /* Gear loading and cooler packing exercises */
 const GEAR = [
-  {k:'tools', code:{es:'HERR', en:'TOOLS'}, es:'Herramientas de trabajo', en:'Work tools', cEs:'Tijeras, serrucho y machete con funda, revisados.', cEn:'Loppers, saw and sheathed machete, inspected.'},
-  {k:'saws', code:{es:'MAQ', en:'SAWS'}, es:'Máquinas de corte', en:'Cutting machines', cEs:'Motosierra y desbrozadora revisadas, combustible en recipiente aprobado, aseguradas para el viaje.', cEn:'Chainsaw and brush cutter inspected, fuel in an approved can, secured for the drive.'},
+  {k:'tools', code:{es:'HERR', en:'TOOLS'}, es:'Herramientas de trabajo', en:'Work tools', cEs:'Tijeras de poda revisadas, cerradas y con seguro.', cEn:'Pruning shears inspected, closed and locked.'},
+  {k:'saws', code:{es:'MAQ', en:'SAWS'}, es:'Máquinas', en:'Machines', cEs:'Desbrozadora, minicargador y aireadora revisados; combustible en recipiente aprobado; asegurados en el remolque o la camioneta.', cEn:'Brush cutter, track loader and aerator inspected; fuel in an approved can; secured on the trailer or truck.'},
   {k:'herb', code:{es:'HERB', en:'HERB'}, es:'Material de herbicida', en:'Herbicide supplies', cEs:'Producto con etiqueta, mochila sin fugas, SDS y kit de derrames, separados de la comida y el agua.', cEn:'Labeled product, leak-free backpack, SDS and spill kit, kept apart from food and water.'},
   {k:'batt', code:{es:'BAT', en:'BATT'}, es:'Baterías de los equipos', en:'Equipment batteries', cEs:'Aseguradas en un lugar seguro, seco y fresco; lejos del sol directo y del combustible.', cEn:'Secured in a safe, dry, cool place; away from direct sun and fuel.'},
   {k:'shovel', code:{es:'PALA', en:'SHOVEL'}, es:'Pala y herramientas necesarias', en:'Shovel and required tools', cEs:'Pala, cuadrante, cinta métrica y lo que pida la tarea del día.', cEn:'Shovel, quadrant, measuring tape and whatever today’s task needs.'},
