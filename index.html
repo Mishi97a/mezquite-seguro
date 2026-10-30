@@ -204,6 +204,11 @@ select { font: inherit; padding: 10px 12px; border: 1.5px solid var(--line); bor
 .stop.contact li::before { color: var(--orange); }
 .report .repgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .report input[type="text"] { width: 100%; }
+.near-form { border-color: var(--orange); }
+.near-form .repgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.near-form .field.wide { grid-column: 1 / -1; }
+.near-form input[type="text"], .near-form select { width: 100%; }
+#near-text { font-family: var(--f-mono); font-size: .85rem; }
 .tickrow { display: flex; gap: 8px; align-items: center; font-weight: 700; }
 .tickrow input { width: 20px; height: 20px; accent-color: var(--good); }
 .issues { margin: 0; padding: 10px 14px 10px 30px; background: var(--orange-soft); border-radius: 8px; display: grid; gap: 4px; }
@@ -319,7 +324,7 @@ input[type="text"] { font: inherit; padding: 10px 12px; border: 1.5px solid var(
 @media (max-width: 760px) {
   .hero, .split { grid-template-columns: 1fr; }
   .paths, .udl { grid-template-columns: 1fr; }
-  .game, .maint, .report .repgrid, .daygrid { grid-template-columns: 1fr; }
+  .game, .maint, .report .repgrid, .daygrid, .near-form .repgrid { grid-template-columns: 1fr; }
   .water { grid-template-columns: 80px 1fr; }
   .stagep { position: static; }
   .avatar { max-width: 190px; }
@@ -710,7 +715,7 @@ const GLOSS = [
 
 /* State */
 const KEY = 'mezquite-seguro-v2';
-let S = {lang:'es', size:false, contrast:false, task:'saw', tool:'saw', start:{}, leave:{}, qc:{}, quiz:{}, visited:{}, name:'', sign:{}, signDraft:{}, game:{task:'saw', start:0, end:0, placed:{}, pending:null, last:null}, ppeLog:{}, best:{}, packs:{}, packLog:{}, crew:{names:'', mode:'day'}, rep:{}, day:null, during:{}, formsDay:''};
+let S = {lang:'es', size:false, contrast:false, task:'saw', tool:'saw', start:{}, leave:{}, qc:{}, quiz:{}, visited:{}, name:'', sign:{}, signDraft:{}, game:{task:'saw', start:0, end:0, placed:{}, pending:null, last:null}, ppeLog:{}, best:{}, packs:{}, packLog:{}, crew:{names:'', mode:'day'}, rep:{}, day:null, during:{}, formsDay:'', near:{}, nearLog:[]};
 try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) S = Object.assign(S, saved); } catch (e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 const L = o => o[S.lang];
@@ -907,6 +912,58 @@ function reportHTML() {
     </div>
     <div id="rep-out">${repOut()}</div>
     <div><p class="lab2">${es ? 'Lista de notificación (propuesta, por confirmar)' : 'Notification list (proposed, to confirm)'}</p><ul class="notify">${NOTIFY.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>
+  </div>`;
+}
+/* Near-miss report form */
+const NEAR_TYPES = [
+  {es:'Máquina o vehículo cerca de un panel', en:'Machine or vehicle close to a panel'},
+  {es:'Paneles en el suelo u obstáculo en la fila', en:'Panels on the ground or obstacle in the row'},
+  {es:'Piedra o pieza lanzada', en:'Thrown rock or part'},
+  {es:'Herbicida: deriva, derrame o salpicadura', en:'Herbicide: drift, spill or splash'},
+  {es:'Calor o deshidratación', en:'Heat or dehydration'},
+  {es:'Serpiente u otro animal', en:'Snake or other animal'},
+  {es:'Herramienta o equipo en mal estado', en:'Tool or equipment in bad condition'},
+  {es:'Otro', en:'Other'}
+];
+const NEARF = [
+  {k:'when', es:'Fecha y hora', en:'Date and time', ph:'10/30 2:15 PM'},
+  {k:'where', es:'Ubicación (PCS, fila o referencia)', en:'Location (PCS, row or landmark)', ph:'PCS01234, fila 42'},
+  {k:'what', es:'¿Qué pasó?', en:'What happened?', area:1},
+  {k:'could', es:'¿Qué pudo haber pasado?', en:'What could have happened?', area:1},
+  {k:'fix', es:'¿Qué se hizo para corregirlo?', en:'What was done to fix it?', area:1},
+  {k:'idea', es:'Idea para que no se repita', en:'Idea to keep it from happening again', area:1},
+  {k:'by', es:'Reporta (opcional, puede ser anónimo)', en:'Reported by (optional, can be anonymous)', ph:''}
+];
+const nearReady = () => { const n = S.near; return n.type !== undefined && n.type !== '' && (n.where || '').trim() && (n.what || '').trim(); };
+function nearText() {
+  const n = S.near, es = S.lang === 'es', t = NEAR_TYPES[n.type];
+  return es
+    ? `REPORTE DE CASI-INCIDENTE\nFecha y hora: ${n.when || ''}\nUbicación: ${n.where || ''}\nTipo: ${t ? t.es : ''}\nQué pasó: ${n.what || ''}\nQué pudo haber pasado: ${n.could || ''}\nQué se hizo: ${n.fix || ''}\nIdea para que no se repita: ${n.idea || ''}\nSupervisor avisado: ${n.told ? 'Sí' : 'No'}\nReporta: ${n.by || 'Anónimo'}`
+    : `NEAR-MISS REPORT\nDate and time: ${n.when || ''}\nLocation: ${n.where || ''}\nType: ${t ? t.en : ''}\nWhat happened: ${n.what || ''}\nWhat could have happened: ${n.could || ''}\nWhat was done: ${n.fix || ''}\nIdea to prevent it: ${n.idea || ''}\nSupervisor notified: ${n.told ? 'Yes' : 'No'}\nReported by: ${n.by || 'Anonymous'}`;
+}
+function nearOut() {
+  const es = S.lang === 'es', ok = nearReady();
+  return `${ok ? '' : `<p class="warn-line">${es ? 'Para enviar: elige el tipo y escribe la ubicación y qué pasó.' : 'To send: pick the type and fill in the location and what happened.'}</p>`}
+    <label for="near-text" class="lab2">${es ? 'Vista previa del reporte' : 'Report preview'}</label>
+    <textarea id="near-text" rows="10" readonly>${esc(nearText())}</textarea>
+    <div class="row"><button class="btn go" id="near-copy" ${ok ? '' : 'disabled'}>${es ? 'Copiar reporte' : 'Copy report'}</button>
+    <button class="btn alt" id="near-save" ${ok ? '' : 'disabled'}>${es ? 'Guardar y empezar otro' : 'Save and start another'}</button>
+    <span class="counter" id="near-msg" aria-live="polite"></span></div>`;
+}
+function nearHTML() {
+  const es = S.lang === 'es', n = S.near, log = S.nearLog;
+  return `<div class="sign near-form" id="near-form">
+    <div class="qhead"><div><p class="eyebrow">${es ? 'Formulario' : 'Form'}</p><h2 class="h3">${es ? 'Reportar un casi-incidente (near miss)' : 'Report a near miss'}</h2></div>
+      <span class="pill good">${es ? 'Reportados en este teléfono' : 'Reported on this phone'}: ${log.length}</span></div>
+    <p>${es ? 'Llénalo en el momento, mientras lo recuerdas. Cada reporte ayuda a evitar el siguiente accidente.' : 'Fill it in right away, while you remember. Every report helps prevent the next accident.'}</p>
+    <div class="field"><label for="near-type">${es ? 'Tipo' : 'Type'}</label>
+      <select id="near-type" data-nearsel="type"><option value="">${es ? 'Elige una opción' : 'Choose one'}</option>${NEAR_TYPES.map((t, i) => `<option value="${i}" ${String(n.type) === String(i) ? 'selected' : ''}>${L(t)}</option>`).join('')}</select></div>
+    <div class="repgrid">${NEARF.map(f => `<div class="field ${f.area ? 'wide' : ''}"><label for="near-${f.k}">${L(f)}</label>${f.area
+      ? `<textarea id="near-${f.k}" rows="2" data-near="${f.k}">${esc(n[f.k] || '')}</textarea>`
+      : `<input type="text" id="near-${f.k}" data-near="${f.k}" value="${esc(n[f.k] || '')}" placeholder="${esc(f.ph)}">`}</div>`).join('')}</div>
+    <label class="tickrow"><input type="checkbox" id="near-told" data-nearc="told" ${n.told ? 'checked' : ''}> ${es ? 'Avisé al supervisor en el mismo turno' : 'I told the supervisor the same shift'}</label>
+    <div id="near-out">${nearOut()}</div>
+    ${log.length ? `<div><p class="lab2">${es ? 'Últimos reportes guardados' : 'Latest saved reports'}</p><ul class="notify">${log.slice(-5).reverse().map(r => `<li>${esc(r.when || new Date(r.at).toLocaleDateString(es ? 'es-MX' : 'en-US'))} · ${L(NEAR_TYPES[r.type] || NEAR_TYPES.at(-1))} · ${esc((r.where || '').slice(0, 40))}</li>`).join('')}</ul></div>` : ''}
   </div>`;
 }
 function noWork() {
@@ -1337,6 +1394,7 @@ const VIEWS = {
       </div>
       <h2 class="h3">${es ? 'Protección durante el trabajo' : 'Protection while working'}</h2>
       ${checklist(DURING, 'during')}
+      <div class="near"><p><b>${es ? '¿Algo estuvo a punto de pasar?' : 'Did something almost happen?'}</b> ${es ? 'Repórtalo como casi-incidente mientras lo recuerdas.' : 'Report it as a near miss while you remember.'}</p><div class="row"><button class="btn go" data-go="accidente">${es ? 'Reportar un casi-incidente' : 'Report a near miss'}</button></div></div>
       ${heatHTML()}
       ${exp(es ? '¿Qué hace que dejemos de tomar agua cuando hay mucho trabajo? ¿Cómo nos lo recordamos entre todos?' : 'What makes us stop drinking water when work gets busy? How do we remind each other?')}
     </section>`;
@@ -1404,6 +1462,7 @@ const VIEWS = {
         </ul>
         <p><b>${es ? 'Detener, corregir y avisar en el mismo turno. Reportar se reconoce, nunca se sanciona.' : 'Stop, correct and report the same shift. Reporting is recognized, never penalized.'}</b></p>
       </div>
+      ${nearHTML()}
     </section>`;
   },
   nuevo() {
@@ -1554,6 +1613,13 @@ document.addEventListener('click', e => {
   if (b.dataset.water) { dayState().water.push(Date.now()); return render(); }
   if (b.dataset.brk) { dayState().breaks.push(Date.now()); return render(); }
   if (b.dataset.meal) { const d = dayState(); d.meal = d.meal ? 0 : Date.now(); return render(); }
+  if (b.id === 'near-copy') {
+    const ta = document.getElementById('near-text'), msg = document.getElementById('near-msg');
+    const fallback = () => { ta.focus(); ta.select(); msg.textContent = S.lang === 'es' ? 'Texto seleccionado: cópialo con Ctrl+C o mantén presionado.' : 'Text selected: copy with Ctrl+C or long-press.'; };
+    try { navigator.clipboard.writeText(ta.value).then(() => { msg.textContent = S.lang === 'es' ? 'Copiado. Envíalo a tu supervisor.' : 'Copied. Send it to your supervisor.'; }, fallback); } catch (err) { fallback(); }
+    return;
+  }
+  if (b.id === 'near-save') { if (nearReady()) { S.nearLog.push(Object.assign({at: Date.now()}, S.near)); S.near = {}; render(); const f = document.getElementById('near-form'); if (f) f.scrollIntoView({block: 'start'}); } return; }
   if (b.id === 'rep-copy') {
     const ta = document.getElementById('rep-text'), msg = document.getElementById('rep-msg');
     const fallback = () => { ta.focus(); ta.select(); msg.textContent = S.lang === 'es' ? 'Texto seleccionado: cópialo con Ctrl+C o mantén presionado.' : 'Text selected: copy with Ctrl+C or long-press.'; };
@@ -1581,9 +1647,14 @@ document.addEventListener('input', e => {
   if (e.target.id === 'nm') { S.name = e.target.value; save(); }
   if (e.target.dataset.draft) { draft(e.target.dataset.draft).name = e.target.value; save(); }
   if (e.target.dataset.crew) { S.crew.names = e.target.value; save(); }
+  if (e.target.dataset.near) { S.near[e.target.dataset.near] = e.target.value; save(); const o = document.getElementById('near-out'); if (o) o.innerHTML = nearOut(); }
   if (e.target.dataset.rep) { S.rep[e.target.dataset.rep] = e.target.value; save(); const o = document.getElementById('rep-out'); if (o) o.innerHTML = repOut(); }
 });
 document.addEventListener('change', e => {
+  if (e.target.dataset && (e.target.dataset.nearsel || e.target.dataset.nearc)) {
+    if (e.target.dataset.nearsel) S.near.type = e.target.value; else S.near.told = e.target.checked;
+    save(); const o = document.getElementById('near-out'); if (o) o.innerHTML = nearOut();
+  }
   if (e.target.dataset && e.target.dataset.repc) { S.rep[e.target.dataset.repc] = e.target.checked; save(); const o = document.getElementById('rep-out'); if (o) o.innerHTML = repOut(); }
 });
 document.addEventListener('input', e => { if (e.target.dataset.crew) { const t = document.getElementById('turnbox'); if (t) t.innerHTML = turnHTML(); } });
