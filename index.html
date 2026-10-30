@@ -197,6 +197,9 @@ select { font: inherit; padding: 10px 12px; border: 1.5px solid var(--line); bor
 .forms li.done .box { background: var(--good); border-color: var(--good); color: var(--surface); }
 .btn.sm { padding: 6px 14px; font-size: .9rem; }
 .warn-line { background: var(--orange-soft); border-radius: 8px; padding: 10px 14px; font-weight: 700; }
+.tips { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.video-soon { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; border: 2px dashed var(--line); border-radius: 12px; padding: 12px 16px; background: var(--surface); }
+.video-soon p { flex: 1 1 260px; margin: 0; }
 .daygrid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .water { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; grid-template-columns: 110px 1fr; gap: 16px; align-items: center; }
 .drop { width: 100%; height: auto; }
@@ -1213,19 +1216,16 @@ function dayState() {
 }
 const hhmm = ts => new Date(ts).toLocaleTimeString(S.lang === 'es' ? 'es-MX' : 'en-US', {hour: 'numeric', minute: '2-digit'});
 function waterHTML() {
-  const es = S.lang === 'es', d = dayState(), last = d.water.at(-1);
-  const m = last ? Math.floor((Date.now() - last) / 60000) : null, late = m === null || m >= 20;
-  const lvl = Math.min(d.water.length / 8, 1), top = 112 - lvl * 106;
-  return `<svg viewBox="0 0 100 120" class="drop" aria-hidden="true"><defs><clipPath id="dropclip"><path d="M50 6C50 6 14 50 14 76a36 36 0 0 0 72 0C86 50 50 6 50 6z"/></clipPath></defs>
-      <path d="M50 6C50 6 14 50 14 76a36 36 0 0 0 72 0C86 50 50 6 50 6z" fill="var(--solar-soft)" stroke="var(--solar)" stroke-width="3"/>
-      <rect x="0" y="${top}" width="100" height="120" fill="var(--solar)" clip-path="url(#dropclip)" opacity=".85"/></svg>
+  const es = S.lang === 'es';
+  return `<svg viewBox="0 0 100 120" class="drop" aria-hidden="true"><path d="M50 6C50 6 14 50 14 76a36 36 0 0 0 72 0C86 50 50 6 50 6z" fill="var(--solar)" fill-opacity=".85" stroke="var(--solar)" stroke-width="3"/></svg>
     <div class="section" style="gap:6px">
       <p class="eyebrow">${es ? 'Agua' : 'Water'}</p>
-      <p><span class="score">${d.water.length}</span> ${es ? (d.water.length === 1 ? 'vaso hoy' : 'vasos hoy') : (d.water.length === 1 ? 'cup today' : 'cups today')}</p>
-      <p class="counter">${last ? (es ? `Último vaso hace ${m} min (${hhmm(last)})` : `Last cup ${m} min ago (${hhmm(last)})`) : (es ? 'Todavía no registras agua hoy' : 'No water logged yet today')}</p>
-      <p class="pill ${late ? 'warn' : 'good'}">${late ? (es ? 'Toca tomar agua' : 'Time to drink') : (es ? 'Vas bien' : 'On track')}</p>
-      <p>${es ? 'Un vaso cada 15 a 20 minutos, aunque no tengas sed.' : 'One cup every 15 to 20 minutes, even if you are not thirsty.'}</p>
-      <button class="btn go" data-water="1">${es ? 'Tomé un vaso de agua' : 'I drank a cup of water'}</button>
+      <p class="h3">${es ? 'Un vaso cada 15 a 20 minutos, aunque no tengas sed.' : 'One cup every 15 to 20 minutes, even if you are not thirsty.'}</p>
+      <ul class="tips">
+        <li>${es ? 'Agua y electrolitos en la hielera, a la sombra.' : 'Water and electrolytes in the cooler, in the shade.'}</li>
+        <li>${es ? 'Toma agua en cada pausa, no esperes a tener sed.' : 'Drink at every break; don’t wait until you are thirsty.'}</li>
+        <li>${es ? 'Recuérdale a tu compañero que tome agua.' : 'Remind your partner to drink.'}</li>
+      </ul>
     </div>`;
 }
 function heatHTML() {
@@ -1353,6 +1353,8 @@ const VIEWS = {
       <h1 class="h2">${es ? 'Cómo manejar el equipo' : 'How to handle the equipment'}</h1>
       <p class="lead">${es ? 'Cada herramienta se revisa, se arranca y se opera siempre igual. Las distancias son referencias: mandan el manual, la etiqueta y las reglas del sitio.' : 'Every tool is checked, started and run the same way every time. Distances are references: the manual, the label and site rules govern.'}</p>
       <div class="tabs" role="tablist">${TOOLS.map(x => `<button class="tab" role="tab" data-tool="${x.k}" aria-selected="${x.k === S.tool}">${L(x)}</button>`).join('')}</div>
+      <div class="video-soon" role="note"><span class="pill warn">${es ? 'Tentativo' : 'Tentative'}</span>
+        <p><b>${es ? `Video de entrenamiento: ${L(t)}` : `Training video: ${L(t)}`}</b> · ${es ? 'Próximamente. El manejo de cada equipo seguirá los videos oficiales que se van a agregar; estas instrucciones son una guía provisional.' : 'Coming soon. Each machine’s handling will follow the official videos to be added; these instructions are a provisional guide.'}</p></div>
       ${figure(t.k)}
       ${t.noteEs ? `<p class="pill warn">${F(t, 'note')}</p>` : ''}
       <div class="split">
@@ -1426,20 +1428,6 @@ const VIEWS = {
       <div class="lessons">
         <h2 class="h3">${es ? 'Lo que aprendimos de un incidente real' : 'What we learned from a real incident'}</h2>
         <p>${es ? 'Un minicargador con desbrozadora, al girar dentro de la fila para alejarse del array, rozó con su esquina trasera el borde inferior de un módulo inclinado. No hubo lesionados.' : 'A track loader with a brush cutter, turning in the row away from the array, grazed a tilted module’s lower edge with its rear corner. No injuries.'}</p>
-        <div class="do">
-          <div class="y"><span class="lab">${es ? 'Lo que salió bien' : 'What went right'}</span><ul>
-            <li>${es ? 'El operador reportó el contacto, sin ocultarlo' : 'The operator reported the contact, no concealment'}</li>
-            <li>${es ? 'Paro de trabajo en unos 75 minutos' : 'Stand-down within about 75 minutes'}</li>
-            <li>${es ? 'Cuadrilla y equipo fuera de los arrays a las 11:00' : 'Crew and equipment out of the arrays by 11:00'}</li>
-            <li>${es ? 'Evidencia conservada, sin intentar reparar' : 'Evidence preserved, no repair attempted'}</li>
-            <li>${es ? 'Declaración y reconstrucción el mismo día' : 'Statement and reconstruction the same day'}</li></ul></div>
-          <div class="n"><span class="lab">${es ? 'Lo que no' : 'What didn’t'}</span><ul>
-            <li>${es ? 'Ubicación reportada mal dos veces' : 'Location reported wrong twice'}</li>
-            <li>${es ? 'O&M tardó unas 5.5 horas en encontrar el módulo' : 'O&M took about 5.5 hours to find the module'}</li>
-            <li>${es ? 'Sin barricada en el módulo hasta las 2:50 PM' : 'No barricade at the module until 2:50 PM'}</li>
-            <li>${es ? 'El reporte salió antes de verificar la ubicación' : 'The report went out before the location was verified'}</li>
-            <li>${es ? 'No se envió al correo de incidentes del cliente' : 'Not sent to the client incident email'}</li></ul></div>
-        </div>
         ${exp(es ? 'Si hubieran leído la etiqueta del pilote y puesto un pin GPS en ese momento, ¿cuánto tiempo se habría ahorrado O&M?' : 'If the pile tag had been read and a GPS pin dropped at that moment, how much time would O&M have saved?')}
       </div>
       <h2 class="h3">${es ? 'Qué hacer según el tipo' : 'What to do by type'}</h2>
